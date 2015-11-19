@@ -1,0 +1,25 @@
+{
+    "author": {
+        "name": "Sergey Nikitin",
+        "email": "nik.pasaran@gmail.com",
+        "url": "https://github.com/pasaran"
+    },
+    "name": "descript2",
+    "description": "descript2",
+    "version": "0.0.0",
+    "homepage": "https://github.com/pasaran/descript2",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/pasaran/descript2.git"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "mocha": "*",
+        "expect.js": "*"
+    },
+    "engines": {
+        "node": "*"
+    }
+}
+
