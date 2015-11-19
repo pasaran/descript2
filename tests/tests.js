@@ -18,29 +18,53 @@ describe = function( id, callback ) {
     } );
 };
 
+var _it = it;
+it = function( id, callback ) {
+    _it( id, function( done ) {
+        callback( id, done );
+    } );
+};
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 fake.listen( 8080, '0.0.0.0', function() {
     describe( 'basic requests', function() {
 
-        describe( '/test/1/', function( path ) {
-
-            it( 'get', function( done ) {
-                fake.add( path, {
-                    status_code: 200,
-                    content: 'Hello, World'
-                } );
-
-                de.request( `${ host }${ path }` )
-                    .then( function( result ) {
-                        expect( result.status_code ).to.be.eql( 200 );
-                        expect( result.body.toString() ).to.be.eql( 'Hello, World' );
-
-                        done();
-                    } );
-
+        it( '/test/1/', function( path, done ) {
+            fake.add( path, {
+                status_code: 200,
+                content: 'Hello, World',
             } );
 
+            de.request( `${ host }${ path }` )
+                .then( function( result ) {
+                    expect( result.status_code ).to.be.eql( 200 );
+                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+
+                    done();
+                } );
+        } );
+
+        it( '/test/2/', function( path, done ) {
+            fake.add( path, {
+                status_code: 200,
+                content: 'Hello, World',
+
+                callback: function( req ) {
+                    expect( req.method ).to.be.eql( 'POST' );
+                }
+            } );
+
+            de.request( {
+                url: `${ host }${ path }`,
+                method: 'POST'
+            } )
+                .then( function( result ) {
+                    expect( result.status_code ).to.be.eql( 200 );
+                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+
+                    done();
+                } );
         } );
 
     } );
