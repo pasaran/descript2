@@ -14,27 +14,15 @@ var base_url = 'http://127.0.0.1:8080';
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var _describe = describe;
-describe = function( id, callback ) {
-    _describe( id, function() {
-        callback( id );
-    } );
-};
-
-var _it = it;
-it = function( id, callback ) {
-    _it( id, function( done ) {
-        callback( id, done );
-    } );
-};
-
-//  ---------------------------------------------------------------------------------------------------------------  //
-
 fake.listen( 8080, '0.0.0.0', function() {
 
     describe( 'get request', function() {
 
-        it( '/get/1/', function( path, done ) {
+        var n = 1;
+
+        it( 'url as a string', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
@@ -49,7 +37,9 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/2/', function( path, done ) {
+        it( 'url as a option', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
@@ -66,13 +56,16 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/3/', function( path, done ) {
+        it( 'protocol, host, port, path', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
             } );
 
             de.request( {
+                protocol: 'http:',
                 host: '127.0.0.1',
                 port: 8080,
                 path: path
@@ -85,13 +78,16 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/4/', function( path, done ) {
+        it( 'protocol, hostname, port, path', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
             } );
 
             de.request( {
+                protocol: 'http:',
                 hostname: '127.0.0.1',
                 port: 8080,
                 path: path
@@ -104,7 +100,9 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/5/', function( path, done ) {
+        it( 'hostname takes priority over host', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
@@ -124,7 +122,9 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/6/', function( path, done ) {
+        it( 'method is get', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, function( req ) {
                 expect( req.method ).to.be.eql( 'GET' );
 
@@ -136,7 +136,9 @@ fake.listen( 8080, '0.0.0.0', function() {
             } );
         } );
 
-        it( '/get/7/', function( path, done ) {
+        it( 'headers are lower-cased', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, function( req ) {
                 expect( req.headers[ 'x-request-test-1' ] ).to.be.eql( 'foo' );
                 expect( req.headers[ 'x-request-test-2' ] ).to.be.eql( 'bar' );
@@ -153,7 +155,9 @@ fake.listen( 8080, '0.0.0.0', function() {
             } );
         } );
 
-        it( '/get/8/', function( path, done ) {
+        it( 'url takes priority over hostname, port, path', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
@@ -173,7 +177,9 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/get/9/', function( path, done ) {
+        it( 'query', function( done ) {
+            var path = `/get/${ n++ }/`;
+
             var query = {
                 hello: 'Привет!',
                 foo: 42
@@ -194,15 +200,14 @@ fake.listen( 8080, '0.0.0.0', function() {
     } );
 
     describe( 'post request', function() {
+        var n = 1;
 
-        it( '/post/1/', function( path, done ) {
+        it( 'post', function( done ) {
+            var path = `/post/${ n++ }/`;
+
             fake.add( path, {
                 status_code: 200,
                 content: 'Hello, World',
-
-                callback: function( req, res, data ) {
-                    expect( req.method ).to.be.eql( 'POST' );
-                }
             } );
 
             de.request( {
@@ -217,7 +222,9 @@ fake.listen( 8080, '0.0.0.0', function() {
                 } );
         } );
 
-        it( '/post/2/', function( path, done ) {
+        it( 'body is a buffer', function( done ) {
+            var path = `/post/${ n++ }/`;
+
             var content = Buffer( 'Привет!' );
 
             fake.add( path, function( req, res, data ) {
@@ -235,7 +242,9 @@ fake.listen( 8080, '0.0.0.0', function() {
             } );
         } );
 
-        it( '/post/3/', function( path, done ) {
+        it( 'body is an object', function( done ) {
+            var path = `/post/${ n++ }/`;
+
             var content = {
                 hello: 'Привет!',
                 foo: 42
@@ -256,7 +265,9 @@ fake.listen( 8080, '0.0.0.0', function() {
             } );
         } );
 
-        it( '/post/4/', function( path, done ) {
+        it( 'body is a string', function( done ) {
+            var path = `/post/${ n++ }/`;
+
             var content = 'Hello, World';
 
             fake.add( path, function( req, res, data ) {
@@ -274,7 +285,9 @@ fake.listen( 8080, '0.0.0.0', function() {
             } );
         } );
 
-        it( '/post/5/', function( path, done ) {
+        it( 'body is a string, custom content-type', function( done ) {
+            var path = `/post/${ n++ }/`;
+
             var css = 'body { margin: 0 };';
 
             fake.add( path, function( req, res, data ) {
