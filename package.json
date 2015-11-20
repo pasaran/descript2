@@ -16,7 +16,8 @@
     },
     "devDependencies": {
         "mocha": "*",
-        "expect.js": "*"
+        "expect.js": "*",
+        "nommon": "*"
     },
     "engines": {
         "node": "*"

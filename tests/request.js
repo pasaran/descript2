@@ -12,6 +12,8 @@ var fake = new Fake();
 
 var base_url = 'http://127.0.0.1:8080';
 
+var hello_string = 'Hello, World';
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 fake.listen( 8080, '0.0.0.0', function() {
@@ -21,47 +23,47 @@ fake.listen( 8080, '0.0.0.0', function() {
         var n = 1;
 
         it( 'url as a string', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( `${ base_url }${ path }` )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'url as a option', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
                 url: `${ base_url }${ path }`
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'protocol, host, port, path', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
@@ -71,19 +73,19 @@ fake.listen( 8080, '0.0.0.0', function() {
                 path: path
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'protocol, hostname, port, path', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
@@ -93,19 +95,19 @@ fake.listen( 8080, '0.0.0.0', function() {
                 path: path
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'hostname takes priority over host', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
@@ -115,15 +117,15 @@ fake.listen( 8080, '0.0.0.0', function() {
                 path: path
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'method is get', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, function( req ) {
                 expect( req.method ).to.be.eql( 'GET' );
@@ -137,11 +139,11 @@ fake.listen( 8080, '0.0.0.0', function() {
         } );
 
         it( 'headers are lower-cased', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, function( req ) {
-                expect( req.headers[ 'x-request-test-1' ] ).to.be.eql( 'foo' );
-                expect( req.headers[ 'x-request-test-2' ] ).to.be.eql( 'bar' );
+                expect( req.headers[ 'x-request-test-1' ] ).to.be( 'foo' );
+                expect( req.headers[ 'x-request-test-2' ] ).to.be( 'bar' );
 
                 done();
             } );
@@ -156,11 +158,11 @@ fake.listen( 8080, '0.0.0.0', function() {
         } );
 
         it( 'url takes priority over hostname, port, path', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
@@ -170,15 +172,15 @@ fake.listen( 8080, '0.0.0.0', function() {
                 path: '/-/foo/bar/'
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'query', function( done ) {
-            var path = `/get/${ n++ }/`;
+            var path = `/get/${ n++ }`;
 
             var query = {
                 hello: 'Привет!',
@@ -203,11 +205,11 @@ fake.listen( 8080, '0.0.0.0', function() {
         var n = 1;
 
         it( 'post', function( done ) {
-            var path = `/post/${ n++ }/`;
+            var path = `/post/${ n++ }`;
 
             fake.add( path, {
                 status_code: 200,
-                content: 'Hello, World',
+                content: hello_string,
             } );
 
             de.request( {
@@ -215,22 +217,22 @@ fake.listen( 8080, '0.0.0.0', function() {
                 method: 'POST'
             } )
                 .then( function( result ) {
-                    expect( result.status_code ).to.be.eql( 200 );
-                    expect( result.body.toString() ).to.be.eql( 'Hello, World' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
 
                     done();
                 } );
         } );
 
         it( 'body is a buffer', function( done ) {
-            var path = `/post/${ n++ }/`;
+            var path = `/post/${ n++ }`;
 
             var content = Buffer( 'Привет!' );
 
             fake.add( path, function( req, res, data ) {
-                expect( Buffer.compare( content, data) ).to.be.eql( 0 );
-                expect( req.headers[ 'content-type' ] ).to.be.eql( 'application/octet-stream' );
-                expect( req.headers[ 'content-length' ] ).to.be.eql( Buffer.byteLength( content ) );
+                expect( Buffer.compare( content, data) ).to.be( 0 );
+                expect( req.headers[ 'content-type' ] ).to.be( 'application/octet-stream' );
+                expect( req.headers[ 'content-length' ] ).to.be( String( Buffer.byteLength( content ) ) );
 
                 done();
             } );
@@ -243,7 +245,7 @@ fake.listen( 8080, '0.0.0.0', function() {
         } );
 
         it( 'body is an object', function( done ) {
-            var path = `/post/${ n++ }/`;
+            var path = `/post/${ n++ }`;
 
             var content = {
                 hello: 'Привет!',
@@ -252,8 +254,8 @@ fake.listen( 8080, '0.0.0.0', function() {
 
             fake.add( path, function( req, res, data ) {
                 expect( qs_.parse( data.toString() ) ).to.be.eql( content );
-                expect( req.headers[ 'content-type' ] ).to.be.eql( 'application/x-www-form-urlencoded' );
-                expect( req.headers[ 'content-length' ] ).to.be.eql( qs_.stringify( content ).length );
+                expect( req.headers[ 'content-type' ] ).to.be( 'application/x-www-form-urlencoded' );
+                expect( req.headers[ 'content-length' ] ).to.be( String( qs_.stringify( content ).length ) );
 
                 done();
             } );
@@ -266,14 +268,14 @@ fake.listen( 8080, '0.0.0.0', function() {
         } );
 
         it( 'body is a string', function( done ) {
-            var path = `/post/${ n++ }/`;
+            var path = `/post/${ n++ }`;
 
-            var content = 'Hello, World';
+            var content = hello_string;
 
             fake.add( path, function( req, res, data ) {
-                expect( data.toString() ).to.be.eql( content );
-                expect( req.headers[ 'content-type' ] ).to.be.eql( 'text/plain' );
-                expect( req.headers[ 'content-length' ] ).to.be.eql( content.length );
+                expect( data.toString() ).to.be( content );
+                expect( req.headers[ 'content-type' ] ).to.be( 'text/plain' );
+                expect( req.headers[ 'content-length' ] ).to.be( String( content.length ) );
 
                 done();
             } );
@@ -286,13 +288,13 @@ fake.listen( 8080, '0.0.0.0', function() {
         } );
 
         it( 'body is a string, custom content-type', function( done ) {
-            var path = `/post/${ n++ }/`;
+            var path = `/post/${ n++ }`;
 
             var css = 'body { margin: 0 };';
 
             fake.add( path, function( req, res, data ) {
-                expect( data.toString() ).to.be.eql( css );
-                expect( req.headers[ 'content-type' ] ).to.be.eql( 'text/css' );
+                expect( data.toString() ).to.be( css );
+                expect( req.headers[ 'content-type' ] ).to.be( 'text/css' );
 
                 done();
             } );
@@ -305,6 +307,170 @@ fake.listen( 8080, '0.0.0.0', function() {
                 },
                 body: css
             } );
+        } );
+
+    } );
+
+    describe( 'errors and retries', function() {
+        var n = 1;
+
+        it( 'error', function( done ) {
+            var path = `/error/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 503
+            } );
+
+            de.request( `${ base_url }${ path }` )
+                .fail( function( result ) {
+                    expect( result.status_code ).to.be( 503 );
+
+                    done();
+                } );
+        } );
+
+        it( 'error with retries', function( done ) {
+            var path = `/error/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 503
+            } );
+
+            de.request( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1
+            } )
+                .fail( function( result ) {
+                    expect( result.status_code ).to.be( 503 );
+                    expect( result.log ).to.have.length( 1 );
+                    expect( result.log[ 0 ].status_code ).to.be( 503 );
+
+                    done();
+                } );
+        } );
+
+        it( 'error, retry, success', function( done ) {
+            var path = `/error/${ n++ }`;
+
+            fake.add( path, [
+                {
+                    status_code: 503
+                },
+                {
+                    status_code: 200,
+                    content: hello_string
+                }
+            ] );
+
+            de.request( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1
+            } )
+                .then( function( result ) {
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
+                    expect( result.log[ 0 ].status_code ).to.be( 503 );
+
+                    done();
+                } );
+        } );
+
+        it( 'no retry on 404 by default', function( done ) {
+            var path = `/error/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 404
+            } );
+
+            de.request( `${ base_url }${ path }` )
+                .fail( function( result ) {
+                    expect( result.status_code ).to.be( 404 );
+                    expect( result.log ).to.be( undefined );
+
+                    done();
+                } );
+        } );
+
+        it( 'retry on 404 with custom is_retry_allowed', function( done ) {
+            var path = `/error/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 404
+            } );
+
+            de.request( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1,
+                is_retry_allowed: function() {
+                    return true;
+                }
+            } )
+                .fail( function( result ) {
+                    expect( result.status_code ).to.be( 404 );
+                    expect( result.log ).to.have.length( 1 );
+
+                    done();
+                } );
+        } );
+
+    } );
+
+    describe( 'redirect', function() {
+        var n = 1;
+
+        it( 'redirect', function( done ) {
+            var path = `/redirect/${ n++ }`;
+
+            fake.add( `${ path }/foo`, {
+                status_code: 302,
+                headers: {
+                    'location': `${ base_url }${ path }/bar`
+                }
+            } );
+            fake.add( `${ path }/bar`, {
+                status_code: 200,
+                content: hello_string
+            } );
+
+            de.request( {
+                url: `${ base_url }${ path }/foo`
+            } )
+                .done( function( result ) {
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.body.toString() ).to.be( hello_string );
+                    expect( result.log ).to.have.length( 1 );
+                    expect( result.log[ 0 ].status_code ).to.be( 302 );
+                    expect( result.log[ 0 ].headers.location ).to.be( `${ base_url }${ path }/bar` );
+
+                    done();
+                } );
+        } );
+
+        it( 'no redirect with max_redirects=0', function( done ) {
+            var path = `/redirect/${ n++ }`;
+
+            fake.add( `${ path }/foo`, {
+                status_code: 302,
+                headers: {
+                    'location': `${ base_url }${ path }/bar`
+                }
+            } );
+            fake.add( `${ path }/bar`, {
+                status_code: 200,
+                content: hello_string
+            } );
+
+            de.request( {
+                url: `${ base_url }${ path }/foo`,
+                max_redirects: 0
+            } )
+                .done( function( result ) {
+                    expect( result.status_code ).to.be( 302 );
+                    expect( result.headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
+                    expect( result.log ).to.be( undefined );
+
+                    done();
+                } );
         } );
 
     } );
