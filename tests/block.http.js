@@ -13,9 +13,9 @@ require( '../lib/results/index.js' );
 var Fake = require( '../lib/de.fake.js' );
 var fake = new Fake();
 
-var base_url = 'http://127.0.0.1:8080';
-
 var port = require( './_port.js' )();
+
+var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
