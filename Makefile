@@ -4,6 +4,7 @@ test: tests
 
 test_block:
 	node_modules/.bin/mocha tests/block.js
+	node_modules/.bin/mocha --delay tests/block.http.js
 
 test_request:
 	node_modules/.bin/mocha --delay tests/*.js

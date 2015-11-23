@@ -10,13 +10,15 @@ var de = require( '../lib/de.request.js' );
 var Fake = require( '../lib/de.fake.js' );
 var fake = new Fake();
 
-var base_url = 'http://127.0.0.1:8080';
+var port = require( './_port.js' )();
+
+var base_url = `http://127.0.0.1:${ port }`;
 
 var hello_string = 'Hello, World';
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-fake.listen( 8080, '0.0.0.0', function() {
+fake.listen( port, '0.0.0.0', function() {
 
     describe( 'request', function() {
 
@@ -71,7 +73,7 @@ fake.listen( 8080, '0.0.0.0', function() {
                 de.request( {
                     protocol: 'http:',
                     host: '127.0.0.1',
-                    port: 8080,
+                    port: port,
                     path: path
                 } )
                     .then( function( result ) {
@@ -93,7 +95,7 @@ fake.listen( 8080, '0.0.0.0', function() {
                 de.request( {
                     protocol: 'http:',
                     hostname: '127.0.0.1',
-                    port: 8080,
+                    port: port,
                     path: path
                 } )
                     .then( function( result ) {
@@ -115,7 +117,7 @@ fake.listen( 8080, '0.0.0.0', function() {
                 de.request( {
                     hostname: '127.0.0.1',
                     host: '127.0.0.2',
-                    port: 8080,
+                    port: port,
                     path: path
                 } )
                     .then( function( result ) {
