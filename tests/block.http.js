@@ -1,4 +1,5 @@
 var url_ = require( 'url' );
+var qs_ = require( 'querystring' );
 
 var no = require( 'nommon' );
 
@@ -240,6 +241,41 @@ fake.listen( port, '0.0.0.0', function() {
                 foo: 24,
                 bar: 42
             } );
+        } );
+
+        it( 'options.query, no options.body and POST request', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var params = {
+                foo: 24,
+                bar: 42,
+                quu: 66,
+                boo: 93
+            };
+
+            fake.add( path, function( req, res, data ) {
+                var query = url_.parse( req.url, true ).query;
+                var body = qs_.parse( data.toString() );
+
+                expect( query ).to.be.eql( {
+                    foo: 42,
+                    hello: 'hello'
+                } );
+                expect( body ).to.be.eql( body );
+
+                done();
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }`,
+                method: 'POST',
+                query: {
+                    foo: no.jpath.expr( '.bar' ),
+                    hello: 'hello'
+                }
+            } );
+
+            block.run( params );
         } );
 
     } );
