@@ -278,6 +278,43 @@ fake.listen( port, '0.0.0.0', function() {
             block.run( params );
         } );
 
+        it( 'no options.query, options.body and POST request', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var params = {
+                foo: 24,
+                bar: 42,
+                quu: 66,
+                boo: 93
+            };
+
+            fake.add( path, function( req, res, data ) {
+                var query = url_.parse( req.url, true ).query;
+                var body = qs_.parse( data.toString() );
+
+                expect( query ).to.be.eql( {} );
+                expect( body ).to.be.eql( {
+                    bar: 24,
+                    boo: 66,
+                    qoo: 35
+                } );
+
+                done();
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }`,
+                method: 'POST',
+                body: {
+                    bar: no.jpath.expr( '.foo' ),
+                    boo: no.jpath.expr( '.quu' ),
+                    qoo: 35
+                }
+            } );
+
+            block.run( params );
+        } );
+
         it( 'options.query, options.body and POST request', function( done ) {
             var path = `/block/http/${ n++ }`;
 
