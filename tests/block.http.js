@@ -359,6 +359,179 @@ fake.listen( port, '0.0.0.0', function() {
             block.run( params );
         } );
 
+        it( 'options.max_redirects=0', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( `${ path }/foo`, {
+                status_code: 302,
+                headers: {
+                    location: `${ base_url }${ path }/bar`,
+                }
+            } );
+            fake.add( `${ path }/bar`, {
+                status_code: 200,
+                content: content
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }/foo`,
+                max_redirects: 0
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Value );
+                    expect( result.as_object() ).to.be.eql( null );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_redirects=0, only_meta=true', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( `${ path }/foo`, {
+                status_code: 302,
+                headers: {
+                    location: `${ base_url }${ path }/bar`,
+                }
+            } );
+            fake.add( `${ path }/bar`, {
+                status_code: 200,
+                content: content
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }/foo`,
+                max_redirects: 0,
+                only_meta: true
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Value );
+                    expect( result.as_object().status_code ).to.be( 302 );
+                    expect( result.as_object().headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_redirects=1', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( `${ path }/foo`, {
+                status_code: 302,
+                headers: {
+                    location: `${ base_url }${ path }/bar`,
+                }
+            } );
+            fake.add( `${ path }/bar`, {
+                status_code: 200,
+                content: content
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }/foo`,
+                max_redirects: 1
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Value );
+                    expect( result.as_object() ).to.be( content );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_retries=0, 404 error', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 404
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }`
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Error );
+
+                    var obj = result.as_object();
+                    expect( obj.id ).to.be( 'HTTP_404' );
+                    expect( obj.status_code ).to.be( 404 );
+                    expect( obj.body ).to.be( null );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_retries=1, default is_retry_allowed, 404 error', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            fake.add( path, {
+                status_code: 404
+            } );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Error );
+
+                    var obj = result.as_object();
+                    expect( obj.id ).to.be( 'HTTP_404' );
+                    expect( obj.status_code ).to.be( 404 );
+                    expect( obj.body ).to.be( null );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_retries=1, custom is_retry_allowed, 404 error', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( path, [
+                {
+                    status_code: 404
+                },
+                {
+                    status_code: 200,
+                    content: content
+                }
+            ] );
+
+            var block = new de.Block.Http( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1,
+                is_retry_allowed: function() {
+                    return true;
+                }
+            } );
+
+            block.run()
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Result.Value );
+                    expect( result.as_object() ).to.be( content );
+
+                    done();
+                } );
+        } );
+
     } );
 
     run();
