@@ -1,3 +1,4 @@
 node_modules
 *.swp
+tests/files/not-readable.txt
 

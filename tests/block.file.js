@@ -86,9 +86,14 @@ describe( 'block.file', function() {
     } );
 
     it( 'read unreadable file', function( done ) {
+        var filename = resolve( 'files/not-readable.txt' );
+
+        fs_.writeFileSync( filename, 'Hello', 'utf-8' );
+        fs_.chmodSync( filename, 0222 );
+
         var block = new de.Block.File(
             {
-                filename: resolve( 'files/not-readable.txt' )
+                filename: filename
             }
         );
 
