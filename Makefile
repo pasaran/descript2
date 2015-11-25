@@ -10,6 +10,9 @@ test_block_base:
 test_block_http:
 	node_modules/.bin/mocha --delay tests/block.http.js
 
+test_block_file:
+	node_modules/.bin/mocha tests/block.file.js
+
 test_request:
 	node_modules/.bin/mocha --delay tests/request.js
 

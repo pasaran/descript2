@@ -7,6 +7,7 @@ var expect = require( 'expect.js' );
 
 var de = require( '../lib/blocks/de.block.http.js' );
 require( '../lib/results/index.js' );
+require( '../lib/de.error.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -149,7 +150,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             fake.add( path, {
                 status_code: 200,
-                content: '{"foo":'
+                content: '{"foo":&'
             } );
 
             var block = new de.Block.Http( {
@@ -160,8 +161,10 @@ fake.listen( port, '0.0.0.0', function() {
             block.run()
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Error );
-                    //  FIXME: Брать коды ошибок из одного места.
-                    expect( result.as_object() ).to.be.eql( { id: 'JSON_PARSE_ERROR' } );
+
+                    var obj = result.as_object();
+                    expect( obj.id ).to.be( 'INVALID_JSON' );
+                    expect( obj.message ).to.be( 'Unexpected token &' );
 
                     done();
                 } );
