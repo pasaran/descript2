@@ -7,6 +7,9 @@ test_block: test_block_base test_block_http
 test_block_base:
 	node_modules/.bin/mocha tests/block.js
 
+test_block_deps:
+	node_modules/.bin/mocha tests/block.deps.js
+
 test_block_http:
 	node_modules/.bin/mocha --delay tests/block.http.js
 
