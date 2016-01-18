@@ -53,8 +53,9 @@ describe( 'block.deps', function() {
             }
         );
 
-        de.array( [ b1, b2 ] )
-            .run()
+        var context = new de.Context();
+
+        context.run( de.array( [ b1, b2 ] ) )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -82,8 +83,9 @@ describe( 'block.deps', function() {
             }
         );
 
-        de.array( [ b1, b2 ] )
-            .run()
+        var context = new de.Context();
+
+        context.run( de.array( [ b1, b2 ] ) )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -114,8 +116,9 @@ describe( 'block.deps', function() {
             }
         );
 
-        de.array( [ b1, b2 ] )
-            .run()
+        var context = new de.Context();
+
+        context.run( de.array( [ b1, b2 ] ) )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -146,8 +149,9 @@ describe( 'block.deps', function() {
             }
         );
 
-        de.array( [ b1, b2 ] )
-            .run()
+        var context = new de.Context();
+
+        context.run( de.array( [ b1, b2 ] ) )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -180,11 +184,19 @@ describe( 'block.deps', function() {
             }
         );
 
-        de.object( {
-            foo: de.array( blocks, { id: 'blocks' } ),
-            bar: block
-        }, { id: 'test' } )
-            .run()
+        var context = new de.Context();
+
+        context.run(
+            de.object(
+                {
+                    foo: de.array( blocks, { id: 'blocks' } ),
+                    bar: block
+                },
+                {
+                    id: 'test'
+                }
+            )
+        )
             .then( function( result ) {
                 expect( result.as_object().bar ).to.be.eql( values );
 
