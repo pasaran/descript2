@@ -25,7 +25,12 @@ function callback_after( callback, timeout ) {
 
 function wrap_result( callback ) {
     return function() {
-        return no.promise.resolved( new de.Result.Value( callback() ) );
+        var value = callback();
+        if ( !( value instanceof de.Result.Value ) ) {
+            value = new de.Result.Value( value );
+        }
+
+        return no.promise.resolved( value );
     };
 }
 
@@ -55,7 +60,7 @@ describe( 'block.deps', function() {
 
         var context = new de.Context();
 
-        context.run( de.array( [ b1, b2 ] ) )
+        context.run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -85,7 +90,7 @@ describe( 'block.deps', function() {
 
         var context = new de.Context();
 
-        context.run( de.array( [ b1, b2 ] ) )
+        context.run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -118,7 +123,7 @@ describe( 'block.deps', function() {
 
         var context = new de.Context();
 
-        context.run( de.array( [ b1, b2 ] ) )
+        context.run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -151,7 +156,7 @@ describe( 'block.deps', function() {
 
         var context = new de.Context();
 
-        context.run( de.array( [ b1, b2 ] ) )
+        context.run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -167,10 +172,7 @@ describe( 'block.deps', function() {
             return de.block(
                 callback_after( function() {
                     result[ i ] = value;
-                }, 50 ),
-                {
-                    id: value
-                }
+                }, 50 + 50 * i )
             );
         } );
 
@@ -179,26 +181,99 @@ describe( 'block.deps', function() {
                 return result;
             } ),
             {
-                id: 'block',
                 deps: blocks
             }
         );
 
         var context = new de.Context();
 
-        context.run(
-            de.object(
-                {
-                    foo: de.array( blocks, { id: 'blocks' } ),
-                    bar: block
-                },
-                {
-                    id: 'test'
-                }
-            )
-        )
+        context.run( {
+            foo: blocks,
+            bar: block
+        } )
             .then( function( result ) {
                 expect( result.as_object().bar ).to.be.eql( values );
+
+                done();
+            } );
+    } );
+
+    it( 'chain of deps', function( done ) {
+        var bar_value;
+        var quu_value;
+
+        var foo = de.block(
+            callback_after( function() {
+                bar_value = 'bar';
+
+                return 'foo';
+            }, 50 )
+        );
+
+        var bar = de.block(
+            callback_after( function() {
+                quu_value = 'quu';
+
+                return bar_value;
+            }, 50 ),
+            {
+                deps: foo
+            }
+        );
+
+        var quu = de.block(
+            callback_after( function() {
+                return quu_value;
+            }, 50 ),
+            {
+                deps: bar
+            }
+        );
+
+        var context = new de.Context();
+
+        context.run( [ foo, bar, quu ] )
+            .then( function( result ) {
+                expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
+
+                done();
+            } );
+    } );
+
+    it( 'block depends on array', function( done ) {
+        var v1;
+        var v2;
+
+        var b1 = de.block(
+            callback_after( function() {
+                v1 = 'foo';
+
+                return v1;
+            }, 50 )
+        );
+
+        var b2 = de.block(
+            callback_after( function() {
+                v2 = 'bar';
+
+                return v2;
+            }, 100 )
+        );
+
+        var b3 = de.block(
+            callback_after( function() {
+                return [ v1, v2 ];
+            }, 50 ),
+            {
+                deps: [ b1, b2 ]
+            }
+        );
+
+        var context = new de.Context();
+
+        context.run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
 
                 done();
             } );

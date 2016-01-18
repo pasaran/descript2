@@ -2,7 +2,7 @@ test: tests
 
 tests: test_block test_request
 
-test_block: test_block_base test_block_http
+test_block: test_block_base test_block_deps test_block_http test_block_file
 
 test_block_base:
 	node_modules/.bin/mocha tests/block.js
@@ -19,5 +19,5 @@ test_block_file:
 test_request:
 	node_modules/.bin/mocha --delay tests/request.js
 
-.PHONY: test tests test_block test_block_base test_block_http test_request
+.PHONY: test tests test_block test_block_base test_block_deps test_block_http test_block_file test_request
 

@@ -5,9 +5,7 @@ var no = require( 'nommon' );
 
 var expect = require( 'expect.js' );
 
-var de = require( '../lib/blocks/de.block.file.js' );
-require( '../lib/results/index.js' );
-require( '../lib/de.error.js' );
+var de = require( '../lib/index.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -32,6 +30,7 @@ var files = {
 describe( 'block.file', function() {
 
     it( 'read text file, relative filename with dirname', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: 'files/hello.txt'
@@ -41,7 +40,7 @@ describe( 'block.file', function() {
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Value );
                 expect( result.as_object() ).to.be( files.hello );
@@ -51,13 +50,14 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file, absolute path', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: resolve( 'files/hello.txt' )
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Value );
                 expect( result.as_object() ).to.be( files.hello );
@@ -67,13 +67,14 @@ describe( 'block.file', function() {
     } );
 
     it( 'read unexisted file', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: resolve( 'files/not-found.txt' )
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Error );
 
@@ -91,13 +92,14 @@ describe( 'block.file', function() {
         fs_.writeFileSync( filename, 'Hello', 'utf-8' );
         fs_.chmodSync( filename, 0222 );
 
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: filename
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Error );
 
@@ -110,13 +112,14 @@ describe( 'block.file', function() {
     } );
 
     it( 'read json file', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: resolve( 'files/hello.json' )
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Value );
 
@@ -127,6 +130,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file with json', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: resolve( 'files/hello.json.txt' ),
@@ -134,7 +138,7 @@ describe( 'block.file', function() {
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Value );
 
@@ -145,6 +149,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file with invalid json', function( done ) {
+        var context = new de.Context();
         var block = new de.Block.File(
             {
                 filename: resolve( 'files/hello.txt' ),
@@ -152,7 +157,7 @@ describe( 'block.file', function() {
             }
         );
 
-        block.run()
+        context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Result.Error );
                 expect( result.as_object().id ).to.be( 'INVALID_JSON' );

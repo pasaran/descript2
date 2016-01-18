@@ -5,9 +5,7 @@ var no = require( 'nommon' );
 
 var expect = require( 'expect.js' );
 
-var de = require( '../lib/blocks/de.block.http.js' );
-require( '../lib/results/index.js' );
-require( '../lib/de.error.js' );
+var de = require( '../lib/index.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -35,9 +33,10 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content,
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( `${ base_url }${ path }` );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be( content );
@@ -56,13 +55,14 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content,
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( function( params ) {
                 return {
                     url: `${ base_url }${ path }/${ params.id }`
                 };
             } );
 
-            block.run( { id: 42 } )
+            context.run( block, { id: 42 } )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be( content );
@@ -81,11 +81,12 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content,
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be( content );
@@ -104,12 +105,13 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content,
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 only_meta: true
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object().status_code ).to.be( 200 );
@@ -131,12 +133,13 @@ fake.listen( port, '0.0.0.0', function() {
                 content: JSON.stringify( content ),
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 is_json: true
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be.eql( content );
@@ -153,12 +156,13 @@ fake.listen( port, '0.0.0.0', function() {
                 content: '{"foo":&'
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 is_json: true
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Error );
 
@@ -182,11 +186,12 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be.eql( content );
@@ -205,11 +210,12 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }/{ .id }`
             } );
 
-            block.run( { id: 42 } )
+            context.run( block, { id: 42 } )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be.eql( content );
@@ -232,6 +238,7 @@ fake.listen( port, '0.0.0.0', function() {
                 done();
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 query: {
@@ -240,7 +247,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             } );
 
-            block.run( {
+            context.run( block, {
                 foo: 24,
                 bar: 42
             } );
@@ -269,6 +276,7 @@ fake.listen( port, '0.0.0.0', function() {
                 done();
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
@@ -278,7 +286,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             } );
 
-            block.run( params );
+            context.run( block, params );
         } );
 
         it( 'no options.query, options.body and POST request', function( done ) {
@@ -305,6 +313,7 @@ fake.listen( port, '0.0.0.0', function() {
                 done();
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
@@ -315,7 +324,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             } );
 
-            block.run( params );
+            context.run( block, params );
         } );
 
         it( 'options.query, options.body and POST request', function( done ) {
@@ -345,6 +354,7 @@ fake.listen( port, '0.0.0.0', function() {
                 done();
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
@@ -359,7 +369,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             } );
 
-            block.run( params );
+            context.run( block, params );
         } );
 
         it( 'options.max_redirects=0', function( done ) {
@@ -378,12 +388,13 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 0
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be.eql( null );
@@ -408,13 +419,14 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 0,
                 only_meta: true
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object().status_code ).to.be( 302 );
@@ -440,12 +452,13 @@ fake.listen( port, '0.0.0.0', function() {
                 content: content
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 1
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be( content );
@@ -461,11 +474,12 @@ fake.listen( port, '0.0.0.0', function() {
                 status_code: 404
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Error );
 
@@ -485,12 +499,13 @@ fake.listen( port, '0.0.0.0', function() {
                 status_code: 404
             } );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 max_retries: 1
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Error );
 
@@ -518,6 +533,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             ] );
 
+            var context = new de.Context();
             var block = new de.Block.Http( {
                 url: `${ base_url }${ path }`,
                 max_retries: 1,
@@ -526,7 +542,7 @@ fake.listen( port, '0.0.0.0', function() {
                 }
             } );
 
-            block.run()
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Result.Value );
                     expect( result.as_object() ).to.be( content );
