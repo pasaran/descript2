@@ -25,7 +25,7 @@ function callback_after( callback, timeout ) {
 
 function wrap_result( callback ) {
     return function() {
-        var value = callback();
+        var value = ( typeof callback === 'function' ) ? callback() : callback;
         if ( !( value instanceof de.Result.Value ) ) {
             value = new de.Result.Value( value );
         }
@@ -33,6 +33,12 @@ function wrap_result( callback ) {
         return no.promise.resolved( value );
     };
 }
+
+function run( block, params ) {
+    context = new de.Context();
+
+    return context.run( block, params );
+};
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -58,9 +64,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ b1, b2 ] )
+        run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -88,9 +92,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ b1, b2 ] )
+        run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -121,9 +123,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ b1, b2 ] )
+        run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -154,9 +154,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ b1, b2 ] )
+        run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
 
@@ -185,9 +183,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( {
+        run( {
             foo: blocks,
             bar: block
         } )
@@ -230,9 +226,7 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ foo, bar, quu ] )
+        run( [ foo, bar, quu ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
 
@@ -269,11 +263,26 @@ describe( 'block.deps', function() {
             }
         );
 
-        var context = new de.Context();
-
-        context.run( [ b1, b2, b3 ] )
+        run( [ b1, b2, b3 ] )
             .then( function( result ) {
                 expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
+
+                done();
+            } );
+    } );
+
+    it( 'block depends on non-existed block (by id)', function( done ) {
+        var block = de.block(
+            wrap_result( 42 ),
+            {
+                deps: 'another_block'
+            }
+        );
+
+        run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Result.Error );
+                expect( result.as_object().id ).to.be.eql( 'DEPS_ERROR' );
 
                 done();
             } );
