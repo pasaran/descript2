@@ -38,8 +38,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be( content );
+                    expect( result ).to.be( content );
 
                     done();
                 } );
@@ -64,8 +63,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block, { id: 42 } )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be( content );
+                    expect( result ).to.be( content );
 
                     done();
                 } );
@@ -88,8 +86,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be( content );
+                    expect( result ).to.be( content );
 
                     done();
                 } );
@@ -113,9 +110,8 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object().status_code ).to.be( 200 );
-                    expect( result.as_object().headers[ 'content-type' ] ).to.be( 'text/plain' );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.headers[ 'content-type' ] ).to.be( 'text/plain' );
 
                     done();
                 } );
@@ -141,8 +137,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be.eql( content );
+                    expect( result ).to.be.eql( content );
 
                     done();
                 } );
@@ -164,11 +159,10 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Error );
+                    expect( result ).to.be.a( de.Error );
 
-                    var obj = result.as_object();
-                    expect( obj.id ).to.be( 'INVALID_JSON' );
-                    expect( obj.message ).to.be( 'Unexpected token &' );
+                    expect( result.error.id ).to.be( 'INVALID_JSON' );
+                    expect( result.error.message ).to.be( 'Unexpected token &' );
 
                     done();
                 } );
@@ -193,8 +187,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be.eql( content );
+                    expect( result ).to.be.eql( content );
 
                     done();
                 } );
@@ -217,8 +210,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block, { id: 42 } )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be.eql( content );
+                    expect( result ).to.be.eql( content );
 
                     done();
                 } );
@@ -396,8 +388,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be.eql( null );
+                    expect( result ).to.be.eql( null );
 
                     done();
                 } );
@@ -428,9 +419,8 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object().status_code ).to.be( 302 );
-                    expect( result.as_object().headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
+                    expect( result.status_code ).to.be( 302 );
+                    expect( result.headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
 
                     done();
                 } );
@@ -460,8 +450,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be( content );
+                    expect( result ).to.be( content );
 
                     done();
                 } );
@@ -481,12 +470,11 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Error );
+                    expect( result ).to.be.a( de.Error );
 
-                    var obj = result.as_object();
-                    expect( obj.id ).to.be( 'HTTP_404' );
-                    expect( obj.status_code ).to.be( 404 );
-                    expect( obj.body ).to.be( null );
+                    expect( result.error.id ).to.be( 'HTTP_404' );
+                    expect( result.error.status_code ).to.be( 404 );
+                    expect( result.error.body ).to.be( null );
 
                     done();
                 } );
@@ -507,12 +495,11 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Error );
+                    expect( result ).to.be.a( de.Error );
 
-                    var obj = result.as_object();
-                    expect( obj.id ).to.be( 'HTTP_404' );
-                    expect( obj.status_code ).to.be( 404 );
-                    expect( obj.body ).to.be( null );
+                    expect( result.error.id ).to.be( 'HTTP_404' );
+                    expect( result.error.status_code ).to.be( 404 );
+                    expect( result.error.body ).to.be( null );
 
                     done();
                 } );
@@ -544,8 +531,7 @@ fake.listen( port, '0.0.0.0', function() {
 
             context.run( block )
                 .then( function( result ) {
-                    expect( result ).to.be.a( de.Result.Value );
-                    expect( result.as_object() ).to.be( content );
+                    expect( result ).to.be( content );
 
                     done();
                 } );

@@ -42,8 +42,7 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Value );
-                expect( result.as_object() ).to.be( files.hello );
+                expect( result ).to.be( files.hello );
 
                 done();
             } );
@@ -59,8 +58,7 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Value );
-                expect( result.as_object() ).to.be( files.hello );
+                expect( result ).to.be( files.hello );
 
                 done();
             } );
@@ -76,11 +74,10 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Error );
+                expect( result ).to.be.a( de.Error );
 
-                var obj = result.as_object();
-                expect( obj.code ).to.be( 'ENOENT' );
-                expect( obj.syscall ).to.be( 'open' );
+                expect( result.error.code ).to.be( 'ENOENT' );
+                expect( result.error.syscall ).to.be( 'open' );
 
                 done();
             } );
@@ -101,11 +98,10 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Error );
+                expect( result ).to.be.a( de.Error );
 
-                var obj = result.as_object();
-                expect( obj.code ).to.be( 'EACCES' );
-                expect( obj.syscall ).to.be( 'open' );
+                expect( result.error.code ).to.be( 'EACCES' );
+                expect( result.error.syscall ).to.be( 'open' );
 
                 done();
             } );
@@ -121,9 +117,7 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Value );
-
-                expect( result.as_object() ).to.be.eql( read_as_json( 'files/hello.json' ) );
+                expect( result ).to.be.eql( read_as_json( 'files/hello.json' ) );
 
                 done();
             } );
@@ -140,9 +134,7 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Value );
-
-                expect( result.as_object() ).to.be.eql( read_as_json( 'files/hello.json.txt' ) );
+                expect( result ).to.be.eql( read_as_json( 'files/hello.json.txt' ) );
 
                 done();
             } );
@@ -159,8 +151,8 @@ describe( 'block.file', function() {
 
         context.run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Error );
-                expect( result.as_object().id ).to.be( 'INVALID_JSON' );
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'INVALID_JSON' );
 
                 done();
             } );

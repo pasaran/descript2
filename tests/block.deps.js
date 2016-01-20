@@ -12,9 +12,6 @@ function callback_after( callback, timeout ) {
 
         setTimeout( function() {
             var value = ( typeof callback === 'function' ) ? callback() : callback;
-            if ( !( value instanceof de.Result.Value ) ) {
-                value = new de.Result.Value( value );
-            }
 
             promise.resolve( value );
         }, timeout );
@@ -26,9 +23,6 @@ function callback_after( callback, timeout ) {
 function wrap_result( callback ) {
     return function() {
         var value = ( typeof callback === 'function' ) ? callback() : callback;
-        if ( !( value instanceof de.Result.Value ) ) {
-            value = new de.Result.Value( value );
-        }
 
         return no.promise.resolved( value );
     };
@@ -66,7 +60,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
+                expect( result ).to.be.eql( [ 24, 42 ] );
 
                 done();
             } );
@@ -94,7 +88,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
+                expect( result ).to.be.eql( [ 24, 42 ] );
 
                 done();
             } );
@@ -125,7 +119,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
+                expect( result ).to.be.eql( [ 24, 42 ] );
 
                 done();
             } );
@@ -156,7 +150,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 24, 42 ] );
+                expect( result ).to.be.eql( [ 24, 42 ] );
 
                 done();
             } );
@@ -188,7 +182,7 @@ describe( 'block.deps', function() {
             bar: block
         } )
             .then( function( result ) {
-                expect( result.as_object().bar ).to.be.eql( values );
+                expect( result.bar ).to.be.eql( values );
 
                 done();
             } );
@@ -228,7 +222,7 @@ describe( 'block.deps', function() {
 
         run( [ foo, bar, quu ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
+                expect( result ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
 
                 done();
             } );
@@ -265,7 +259,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2, b3 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
+                expect( result ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
 
                 done();
             } );
@@ -281,8 +275,8 @@ describe( 'block.deps', function() {
 
         run( block )
             .then( function( result ) {
-                expect( result ).to.be.a( de.Result.Error );
-                expect( result.as_object().id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be.eql( 'DEPS_ERROR' );
 
                 done();
             } );
@@ -315,7 +309,7 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.as_object() ).to.be.eql( [ 42, 24 ] );
+                expect( result ).to.be.eql( [ 42, 24 ] );
 
                 done();
             } );
@@ -333,19 +327,21 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2, b3 ] )
             .then( function( result ) {
-                var obj = result.as_object();
-
-                expect( obj[ 0 ] ).to.be.eql( 42 );
-                expect( obj[ 1 ] ).to.be.eql( 24 );
-                expect( obj[ 2 ].id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 0 ] ).to.be.eql( 42 );
+                expect( result[ 1 ] ).to.be.eql( 24 );
+                expect( result[ 2 ] ).to.be.a( de.Error );
+                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
 
                 done();
             } );
     } );
 
+    /*
     it( 'block depends on block resolved with an error', function( done ) {
         var b1 = de.block( callback_after( function() {
-            return new de.Result.Error( 42 );
+            return de.error( {
+                id: 'UNKNOWN_ERROR'
+            } );
         }, 50 ) );
 
         var b2 = de.block(
@@ -357,12 +353,14 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                expect( result.result[ 1 ] ).to.be.a( de.Result.Error );
+                console.log( result );
+                expect( result[ 1 ] ).to.be.a( de.Error );
+                expect( result[ 1 ].error.id ).to.be.a( 'DEPS_ERROR' );
 
                 done();
             } );
-
     } );
+    */
 
 } );
 
