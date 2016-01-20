@@ -11,7 +11,7 @@ function callback_after( callback, timeout ) {
         var promise = no.promise();
 
         setTimeout( function() {
-            var value = callback();
+            var value = ( typeof callback === 'function' ) ? callback() : callback;
             if ( !( value instanceof de.Result.Value ) ) {
                 value = new de.Result.Value( value );
             }
@@ -271,7 +271,7 @@ describe( 'block.deps', function() {
             } );
     } );
 
-    it( 'block depends on non-existed block (by id)', function( done ) {
+    it( 'block depends on non-existent block #1', function( done ) {
         var block = de.block(
             wrap_result( 42 ),
             {
@@ -286,6 +286,82 @@ describe( 'block.deps', function() {
 
                 done();
             } );
+    } );
+
+    it( 'block depends on result of a function block', function( done ) {
+        var v1;
+
+        var b1 = de.func( function() {
+            return de.block(
+                callback_after( function() {
+                    v1 = 24;
+
+                    return 42;
+                }, 50 ),
+                {
+                    id: 'b1'
+                }
+            );
+        } );
+
+        var b2 = de.block(
+            wrap_result( function() {
+                return v1;
+            } ),
+            {
+                deps: 'b1'
+            }
+        );
+
+        run( [ b1, b2 ] )
+            .then( function( result ) {
+                expect( result.as_object() ).to.be.eql( [ 42, 24 ] );
+
+                done();
+            } );
+    } );
+
+    it( 'block depends on non-existent block #2', function( done ) {
+        var b1 = de.block( callback_after( 42, 50 ) );
+        var b2 = de.block( callback_after( 24, 100 ) );
+        var b3 = de.block(
+            wrap_result( 66 ),
+            {
+                deps: 'b4'
+            }
+        );
+
+        run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                var obj = result.as_object();
+
+                expect( obj[ 0 ] ).to.be.eql( 42 );
+                expect( obj[ 1 ] ).to.be.eql( 24 );
+                expect( obj[ 2 ].id ).to.be.eql( 'DEPS_ERROR' );
+
+                done();
+            } );
+    } );
+
+    it( 'block depends on block resolved with an error', function( done ) {
+        var b1 = de.block( callback_after( function() {
+            return new de.Result.Error( 42 );
+        }, 50 ) );
+
+        var b2 = de.block(
+            wrap_result( 24 ),
+            {
+                deps: b1
+            }
+        );
+
+        run( [ b1, b2 ] )
+            .then( function( result ) {
+                expect( result.result[ 1 ] ).to.be.a( de.Result.Error );
+
+                done();
+            } );
+
     } );
 
 } );
