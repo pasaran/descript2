@@ -336,14 +336,8 @@ describe( 'block.deps', function() {
             } );
     } );
 
-    /*
-    it( 'block depends on block resolved with an error', function( done ) {
-        var b1 = de.block( callback_after( function() {
-            return de.error( {
-                id: 'UNKNOWN_ERROR'
-            } );
-        }, 50 ) );
-
+    it( 'block depends on a block resolved with an error', function( done ) {
+        var b1 = de.block( callback_after( de.error( 'UNKNOWN_ERROR' ), 50 ) );
         var b2 = de.block(
             wrap_result( 24 ),
             {
@@ -353,14 +347,36 @@ describe( 'block.deps', function() {
 
         run( [ b1, b2 ] )
             .then( function( result ) {
-                console.log( result );
+                expect( result[ 0 ] ).to.be.a( de.Error );
+                expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
                 expect( result[ 1 ] ).to.be.a( de.Error );
-                expect( result[ 1 ].error.id ).to.be.a( 'DEPS_ERROR' );
+                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
 
                 done();
             } );
     } );
-    */
+
+    it( 'block depends on 2 blocks one of them resolved with an error', function( done ) {
+        var b1 = de.block( callback_after( de.error( 'UNKNOWN_ERROR' ), 50 ) );
+        var b2 = de.block( callback_after( 42, 100 ) );
+        var b3 = de.block(
+            wrap_result( 24 ),
+            {
+                deps: [ b1, b2 ]
+            }
+        );
+
+        run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                expect( result[ 0 ] ).to.be.a( de.Error );
+                expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
+                expect( result[ 1 ] ).to.be.eql( 42 );
+                expect( result[ 2 ] ).to.be.a( de.Error );
+                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+
+                done();
+            } );
+    } );
 
 } );
 
