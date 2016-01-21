@@ -5,12 +5,14 @@ var expect = require( 'expect.js' );
 
 var de = require( '../lib/de.request.js' );
 
+var helpers = require( './_helpers.js' );
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 var Fake = require( '../lib/de.fake.js' );
 var fake = new Fake();
 
-var port = require( './_port.js' )();
+var port = helpers.port();
 
 var base_url = `http://127.0.0.1:${ port }`;
 
