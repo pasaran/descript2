@@ -1,14 +1,20 @@
-test: tests
+TESTS = test_block_options_params \
+	test_block_options_deps \
+	test_block_options_before \
+	test_block_http \
+	test_block_file \
+	test_request
 
-tests: test_block test_request
+tests: $(TESTS)
 
-test_block: test_block_base test_block_deps test_block_http test_block_file
+test_block_options_params:
+	node_modules/.bin/mocha tests/block.options.params.js
 
-test_block_base:
-	node_modules/.bin/mocha tests/block.js
+test_block_options_deps:
+	node_modules/.bin/mocha tests/block.options.deps.js
 
-test_block_deps:
-	node_modules/.bin/mocha tests/block.deps.js
+test_block_options_before:
+	node_modules/.bin/mocha tests/block.options.before.js
 
 test_block_http:
 	node_modules/.bin/mocha --delay tests/block.http.js
@@ -19,5 +25,5 @@ test_block_file:
 test_request:
 	node_modules/.bin/mocha --delay tests/request.js
 
-.PHONY: test tests test_block test_block_base test_block_deps test_block_http test_block_file test_request
+.PHONY: tests $(TESTS)
 
