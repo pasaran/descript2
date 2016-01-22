@@ -1,6 +1,7 @@
 TESTS = test_block_options_params \
 	test_block_options_deps \
 	test_block_options_before \
+	test_block_options_after \
 	test_block_http \
 	test_block_file \
 	test_request
@@ -15,6 +16,9 @@ test_block_options_deps:
 
 test_block_options_before:
 	node_modules/.bin/mocha tests/block.options.before.js
+
+test_block_options_after:
+	node_modules/.bin/mocha tests/block.options.after.js
 
 test_block_http:
 	node_modules/.bin/mocha --delay tests/block.http.js
