@@ -1,3 +1,5 @@
+var no = require( 'nommon' );
+
 var expect = require( 'expect.js' );
 
 var de = require( '../lib/blocks/index.js' );
@@ -209,6 +211,51 @@ describe( 'block', function() {
 
                 expect( params ).to.be.eql( {
                     b: 24
+                } );
+            } );
+
+            it( 'options.params as jexpr', function() {
+                var block = new de.Block( null, {
+                    params: no.jpath.expr( {
+                        a: '.foo',
+                        b: 'context.bar',
+                        c: 'state.quu'
+                    } )
+                } );
+
+                var params = block._params(
+                    { foo: 42 },
+                    { bar: 24 },
+                    { quu: 66 }
+                );
+
+                expect( params ).to.be.eql( {
+                    a: 42,
+                    b: 24,
+                    c: 66
+                } );
+            } );
+
+            it( 'options.params with jexpr', function() {
+                var block = new de.Block( null, {
+                    params: {
+                        a: no.jpath.expr( '.foo' ),
+                        b: no.jpath.expr( 'context.bar' ),
+                        c: no.jpath.expr( 'state.quu' )
+                    }
+                } );
+
+                var params = block._params(
+                    { foo: 42 },
+                    { bar: 24 },
+                    { quu: 66 }
+                );
+
+                expect( params ).to.be.eql( {
+                    foo: 42,
+                    a: 42,
+                    b: 24,
+                    c: 66
                 } );
             } );
 

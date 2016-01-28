@@ -34,7 +34,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
 
@@ -62,7 +63,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
 
@@ -93,7 +95,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
 
@@ -124,7 +127,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
 
@@ -153,7 +157,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( {
+                var context = new de.Context();
+                context.run( {
                     foo: blocks,
                     bar: block
                 } )
@@ -196,7 +201,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ foo, bar, quu ] )
+                var context = new de.Context();
+                context.run( [ foo, bar, quu ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
 
@@ -233,7 +239,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2, b3 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
 
@@ -249,7 +256,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( block )
+                var context = new de.Context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( 'DEPS_ERROR' );
@@ -283,7 +291,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 42, 24 ] );
 
@@ -301,7 +310,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2, b3 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.eql( 42 );
                         expect( result[ 1 ] ).to.be.eql( 24 );
@@ -321,7 +331,8 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.a( de.Error );
                         expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
@@ -342,13 +353,49 @@ describe( 'block', function() {
                     }
                 );
 
-                helpers.run( [ b1, b2, b3 ] )
+                var context = new de.Context();
+                context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.a( de.Error );
                         expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
                         expect( result[ 1 ] ).to.be.eql( 42 );
                         expect( result[ 2 ] ).to.be.a( de.Error );
                         expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+
+                        done();
+                    } );
+            } );
+
+        } );
+
+        describe( 'deps.select', function() {
+
+            it( 'block with deps.select', function( done ) {
+                var b1 = de.block(
+                    helpers.wrap( {
+                        foo: {
+                            bar: 42
+                        }
+                    }, 50 )
+                );
+                var b2 = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        return state;
+                    }, 50 ),
+                    {
+                        deps: {
+                            block: b1,
+                            select: {
+                                quu: '.foo.bar'
+                            }
+                        }
+                    }
+                );
+
+                var context = new de.Context();
+                context.run( [ b1, b2 ] )
+                    .then( function( result ) {
+                        expect( result ).to.be.eql( [ { foo: { bar: 42 } }, { quu: 42 } ] );
 
                         done();
                     } );

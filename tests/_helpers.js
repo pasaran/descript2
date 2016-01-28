@@ -13,12 +13,12 @@ module.exports.port = function() {
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 module.exports.wrap = function( callback, timeout ) {
-    return function( params, context ) {
+    return function( params, context, state ) {
         if ( timeout ) {
             var promise = no.promise();
 
             setTimeout( function() {
-                var value = ( typeof callback === 'function' ) ? callback( params, context ) : callback;
+                var value = ( typeof callback === 'function' ) ? callback( params, context, state ) : callback;
 
                 promise.resolve( value );
             }, timeout );
@@ -26,7 +26,7 @@ module.exports.wrap = function( callback, timeout ) {
             return promise;
 
         } else {
-            var value = ( typeof callback === 'function' ) ? callback( params, context ) : callback;
+            var value = ( typeof callback === 'function' ) ? callback( params, context, state ) : callback;
 
             return no.promise.resolved( value );
         }
