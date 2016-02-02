@@ -35,10 +35,12 @@ module.exports.wrap = function( callback, timeout ) {
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-module.exports.run = function( block, params ) {
+module.exports.context = function() {
     var context = new de.Context();
 
-    return context.run( block, params );
+    context.logger.set_level( de.Logger.LEVEL.OFF );
+
+    return context;
 }
 
 //  ---------------------------------------------------------------------------------------------------------------  //

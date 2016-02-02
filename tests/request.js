@@ -1,6 +1,8 @@
 var qs_ = require( 'querystring' );
 var url_ = require( 'url' );
 
+var no = require( 'nommon' );
+
 var expect = require( 'expect.js' );
 
 var de = require( '../lib/de.request.js' );
@@ -36,7 +38,8 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( `${ base_url }${ path }` )
+                var context = helpers.context();
+                de.request( `${ base_url }${ path }`, context )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -53,9 +56,13 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -72,12 +79,16 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    protocol: 'http:',
-                    host: '127.0.0.1',
-                    port: port,
-                    path: path
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        protocol: 'http:',
+                        host: '127.0.0.1',
+                        port: port,
+                        path: path
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -94,12 +105,16 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    protocol: 'http:',
-                    hostname: '127.0.0.1',
-                    port: port,
-                    path: path
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        protocol: 'http:',
+                        hostname: '127.0.0.1',
+                        port: port,
+                        path: path
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -116,12 +131,16 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    hostname: '127.0.0.1',
-                    host: '127.0.0.2',
-                    port: port,
-                    path: path
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        hostname: '127.0.0.1',
+                        host: '127.0.0.2',
+                        port: port,
+                        path: path
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -133,34 +152,48 @@ fake.listen( port, '0.0.0.0', function() {
             it( 'method is get', function( done ) {
                 var path = `/get/${ n++ }`;
 
-                fake.add( path, function( req ) {
+                fake.add( path, function( req, res, data ) {
                     expect( req.method ).to.be.eql( 'GET' );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
             it( 'headers are lower-cased', function( done ) {
                 var path = `/get/${ n++ }`;
 
-                fake.add( path, function( req ) {
+                fake.add( path, function( req, res, data ) {
                     expect( req.headers[ 'x-request-test-1' ] ).to.be( 'foo' );
                     expect( req.headers[ 'x-request-test-2' ] ).to.be( 'bar' );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    headers: {
-                        'x-request-test-1': 'foo',
-                        'X-REQUEST-TEST-2': 'bar'
-                    }
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        headers: {
+                            'x-request-test-1': 'foo',
+                            'X-REQUEST-TEST-2': 'bar'
+                        }
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
             it( 'url takes priority over hostname, port, path', function( done ) {
@@ -171,12 +204,16 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    hostname: '127.0.0.2',
-                    port: 9090,
-                    path: '/-/foo/bar/'
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        hostname: '127.0.0.2',
+                        port: 9090,
+                        path: '/-/foo/bar/'
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -193,16 +230,23 @@ fake.listen( port, '0.0.0.0', function() {
                     foo: 42
                 };
 
-                fake.add( path, function( req ) {
+                fake.add( path, function( req, res, data ) {
                     expect( url_.parse( req.url, true ).query ).to.be.eql( query );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    query: query
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        query: query
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
         } );
@@ -218,10 +262,14 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string,
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    method: 'POST'
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST'
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -240,14 +288,21 @@ fake.listen( port, '0.0.0.0', function() {
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/octet-stream' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( Buffer.byteLength( content ) ) );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    method: 'POST',
-                    body: content
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        body: content
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
             it( 'body is an object', function( done ) {
@@ -263,14 +318,21 @@ fake.listen( port, '0.0.0.0', function() {
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/x-www-form-urlencoded' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( qs_.stringify( content ).length ) );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    method: 'POST',
-                    body: content
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        body: content
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
             it( 'body is a string', function( done ) {
@@ -283,14 +345,21 @@ fake.listen( port, '0.0.0.0', function() {
                     expect( req.headers[ 'content-type' ] ).to.be( 'text/plain' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( content.length ) );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    method: 'POST',
-                    body: content
-                } );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        body: content
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
             it( 'body is a string, custom content-type', function( done ) {
@@ -302,17 +371,24 @@ fake.listen( port, '0.0.0.0', function() {
                     expect( data.toString() ).to.be( css );
                     expect( req.headers[ 'content-type' ] ).to.be( 'text/css' );
 
-                    done();
+                    res.end();
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'text/css',
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'text/css',
+                        },
+                        body: css
                     },
-                    body: css
-                } );
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
             } );
 
         } );
@@ -327,9 +403,11 @@ fake.listen( port, '0.0.0.0', function() {
                     status_code: 503
                 } );
 
-                de.request( `${ base_url }${ path }` )
-                    .fail( function( result ) {
-                        expect( result.status_code ).to.be( 503 );
+                var context = helpers.context();
+                de.request( `${ base_url }${ path }`, context )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.status_code ).to.be( 503 );
 
                         done();
                     } );
@@ -342,14 +420,19 @@ fake.listen( port, '0.0.0.0', function() {
                     status_code: 503
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    max_retries: 1
-                } )
-                    .fail( function( result ) {
-                        expect( result.status_code ).to.be( 503 );
-                        expect( result.log ).to.have.length( 1 );
-                        expect( result.log[ 0 ].status_code ).to.be( 503 );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        max_retries: 1
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.status_code ).to.be( 503 );
+                        expect( result.error.log ).to.have.length( 1 );
+                        expect( result.error.log[ 0 ].status_code ).to.be( 503 );
 
                         done();
                     } );
@@ -368,10 +451,14 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 ] );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    max_retries: 1
-                } )
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        max_retries: 1
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
@@ -388,10 +475,12 @@ fake.listen( port, '0.0.0.0', function() {
                     status_code: 404
                 } );
 
-                de.request( `${ base_url }${ path }` )
-                    .fail( function( result ) {
-                        expect( result.status_code ).to.be( 404 );
-                        expect( result.log ).to.be( undefined );
+                var context = helpers.context();
+                de.request( `${ base_url }${ path }`, context )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.status_code ).to.be( 404 );
+                        expect( result.error.log ).to.be( undefined );
 
                         done();
                     } );
@@ -404,16 +493,21 @@ fake.listen( port, '0.0.0.0', function() {
                     status_code: 404
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }`,
-                    max_retries: 1,
-                    is_retry_allowed: function() {
-                        return true;
-                    }
-                } )
-                    .fail( function( result ) {
-                        expect( result.status_code ).to.be( 404 );
-                        expect( result.log ).to.have.length( 1 );
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        max_retries: 1,
+                        is_retry_allowed: function() {
+                            return true;
+                        }
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.status_code ).to.be( 404 );
+                        expect( result.error.log ).to.have.length( 1 );
 
                         done();
                     } );
@@ -438,10 +532,14 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }/foo`
-                } )
-                    .done( function( result ) {
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }/foo`
+                    },
+                    context
+                )
+                    .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
                         expect( result.log ).to.have.length( 1 );
@@ -466,11 +564,15 @@ fake.listen( port, '0.0.0.0', function() {
                     content: hello_string
                 } );
 
-                de.request( {
-                    url: `${ base_url }${ path }/foo`,
-                    max_redirects: 0
-                } )
-                    .done( function( result ) {
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }/foo`,
+                        max_redirects: 0
+                    },
+                    context
+                )
+                    .then( function( result ) {
                         expect( result.status_code ).to.be( 302 );
                         expect( result.headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
                         expect( result.log ).to.be( undefined );

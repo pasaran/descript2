@@ -43,7 +43,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( files.hello );
 
@@ -58,7 +59,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( files.hello );
 
@@ -73,7 +75,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
 
@@ -96,7 +99,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
 
@@ -114,7 +118,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.eql( read_as_json( 'files/hello.json' ) );
 
@@ -130,7 +135,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.eql( read_as_json( 'files/hello.json.txt' ) );
 
@@ -146,7 +152,8 @@ describe( 'block', function() {
                 }
             );
 
-            helpers.run( block )
+            var context = helpers.context();
+            context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
                     expect( result.error.id ).to.be( 'INVALID_JSON' );

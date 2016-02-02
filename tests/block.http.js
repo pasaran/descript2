@@ -40,7 +40,8 @@ fake.listen( port, '0.0.0.0', function() {
 
                 var block = new de.Block.Http( `${ base_url }${ path }` );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be( content );
 
@@ -64,7 +65,8 @@ fake.listen( port, '0.0.0.0', function() {
                     };
                 } );
 
-                helpers.run( block, { id: 42 } )
+                var context = helpers.context();
+                context.run( block, { id: 42 } )
                     .then( function( result ) {
                         expect( result ).to.be( content );
 
@@ -86,7 +88,8 @@ fake.listen( port, '0.0.0.0', function() {
                     url: `${ base_url }${ path }`
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be( content );
 
@@ -109,7 +112,8 @@ fake.listen( port, '0.0.0.0', function() {
                     only_meta: true
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.headers[ 'content-type' ] ).to.be( 'text/plain' );
@@ -135,7 +139,8 @@ fake.listen( port, '0.0.0.0', function() {
                     is_json: true
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.eql( content );
 
@@ -156,7 +161,8 @@ fake.listen( port, '0.0.0.0', function() {
                     is_json: true
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
 
@@ -183,7 +189,8 @@ fake.listen( port, '0.0.0.0', function() {
                     url: `${ base_url }${ path }`
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.eql( content );
 
@@ -205,7 +212,8 @@ fake.listen( port, '0.0.0.0', function() {
                     url: `${ base_url }${ path }/{ .id }`
                 } );
 
-                helpers.run( block, { id: 42 } )
+                var context = helpers.context();
+                context.run( block, { id: 42 } )
                     .then( function( result ) {
                         expect( result ).to.be.eql( content );
 
@@ -235,7 +243,8 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 } );
 
-                helpers.run( block, {
+                var context = helpers.context();
+                context.run( block, {
                     foo: 24,
                     bar: 42
                 } );
@@ -273,7 +282,8 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 } );
 
-                helpers.run( block, params );
+                var context = helpers.context();
+                context.run( block, params );
             } );
 
             it( 'no options.query, options.body and POST request', function( done ) {
@@ -310,7 +320,8 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 } );
 
-                helpers.run( block, params );
+                var context = helpers.context();
+                context.run( block, params );
             } );
 
             it( 'options.query, options.body and POST request', function( done ) {
@@ -354,7 +365,8 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 } );
 
-                helpers.run( block, params );
+                var context = helpers.context();
+                context.run( block, params );
             } );
 
             it( 'options.max_redirects=0', function( done ) {
@@ -378,7 +390,8 @@ fake.listen( port, '0.0.0.0', function() {
                     max_redirects: 0
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.eql( null );
 
@@ -408,7 +421,8 @@ fake.listen( port, '0.0.0.0', function() {
                     only_meta: true
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 302 );
                         expect( result.headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
@@ -438,7 +452,8 @@ fake.listen( port, '0.0.0.0', function() {
                     max_redirects: 1
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be( content );
 
@@ -457,9 +472,10 @@ fake.listen( port, '0.0.0.0', function() {
                     url: `${ base_url }${ path }`
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
-                        expect( result ).to.be.a( de.Error );
+                        expect( result ).to.be.a( no.Error );
 
                         expect( result.error.id ).to.be( 'HTTP_404' );
                         expect( result.error.status_code ).to.be( 404 );
@@ -481,9 +497,10 @@ fake.listen( port, '0.0.0.0', function() {
                     max_retries: 1
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
-                        expect( result ).to.be.a( de.Error );
+                        expect( result ).to.be.a( no.Error );
 
                         expect( result.error.id ).to.be( 'HTTP_404' );
                         expect( result.error.status_code ).to.be( 404 );
@@ -516,7 +533,8 @@ fake.listen( port, '0.0.0.0', function() {
                     }
                 } );
 
-                helpers.run( block )
+                var context = helpers.context();
+                context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be( content );
 

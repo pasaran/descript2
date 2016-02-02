@@ -225,8 +225,10 @@ describe( 'block', function() {
 
                 var params = block._params(
                     { foo: 42 },
-                    { bar: 24 },
-                    { quu: 66 }
+                    {
+                        context: { bar: 24 },
+                        state: { quu: 66 }
+                    }
                 );
 
                 expect( params ).to.be.eql( {
@@ -247,8 +249,10 @@ describe( 'block', function() {
 
                 var params = block._params(
                     { foo: 42 },
-                    { bar: 24 },
-                    { quu: 66 }
+                    {
+                        context: { bar: 24 },
+                        state: { quu: 66 }
+                    }
                 );
 
                 expect( params ).to.be.eql( {

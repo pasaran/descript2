@@ -34,7 +34,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
@@ -63,7 +63,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
@@ -95,7 +95,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
@@ -127,7 +127,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 24, 42 ] );
@@ -157,7 +157,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( {
                     foo: blocks,
                     bar: block
@@ -201,7 +201,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ foo, bar, quu ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 'foo', 'bar', 'quu' ] );
@@ -239,7 +239,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 'foo', 'bar', [ 'foo', 'bar' ] ] );
@@ -256,7 +256,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
@@ -291,7 +291,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ 42, 24 ] );
@@ -310,7 +310,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.eql( 42 );
@@ -331,7 +331,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.a( de.Error );
@@ -353,7 +353,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
                         expect( result[ 0 ] ).to.be.a( de.Error );
@@ -392,7 +392,7 @@ describe( 'block', function() {
                     }
                 );
 
-                var context = new de.Context();
+                var context = helpers.context();
                 context.run( [ b1, b2 ] )
                     .then( function( result ) {
                         expect( result ).to.be.eql( [ { foo: { bar: 42 } }, { quu: 42 } ] );
