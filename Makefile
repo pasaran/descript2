@@ -1,4 +1,5 @@
 TESTS = block.options.params \
+	block.options.select \
 	block.options.deps \
 	block.options.before \
 	block.options.after \
@@ -10,6 +11,9 @@ tests: $(TESTS)
 
 block.options.params:
 	node_modules/.bin/mocha tests/block.options.params.js
+
+block.options.select:
+	node_modules/.bin/mocha tests/block.options.select.js
 
 block.options.deps:
 	node_modules/.bin/mocha tests/block.options.deps.js

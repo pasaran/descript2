@@ -414,7 +414,7 @@ describe( 'block', function() {
                         deps: {
                             block: b1,
                             select: {
-                                quu: '.foo.bar'
+                                quu: de.jexpr( '.foo.bar' )
                             }
                         }
                     }
@@ -444,7 +444,7 @@ describe( 'block', function() {
                         deps: {
                             block: b1,
                             select: {
-                                foo: '.foo'
+                                foo: de.jexpr( '.foo' )
                             }
                         }
                     }
@@ -457,7 +457,7 @@ describe( 'block', function() {
                         deps: {
                             block: b1,
                             select: {
-                                bar: '.bar'
+                                bar: de.jexpr( '.bar' )
                             }
                         }
                     }
@@ -520,62 +520,63 @@ describe( 'block', function() {
                     } );
             } );
 
-            it( 'deps.select from two blocks', function( done ) {
+            it( 'merge parent\'s states', function( done ) {
                 var b1 = de.block(
-                    helpers.wrap( {
-                        x: 101,
-                        y: 102,
-                        z: 103,
-                        w: 104
-                    }, 50 ),
+                    helpers.wrap( 'foo', 50 ),
                     {
                         after: function( params, context, state ) {
                             state.a = 1;
                             state.b = 2;
                             state.c = 3;
                             state.d = 4;
-                            state.e = 5;
-                            state.f = 6;
-                            state.g = 7;
+                            state.e = [ 5, 6 ];
+                            state.f = [ 7, 8 ];
+                            state.g = [ 9, 10 ];
+                            state.h = [ 11, 12 ];
+                            state.i = null;
+                            state.j = null;
+                            state.k = null;
+                            state.l = null;
                         }
                     }
                 );
                 var b2 = de.block(
-                    helpers.wrap( {
-                        x: 201,
-                        y: 202,
-                        z: 203,
-                        w: 204
-                    }, 50 ),
+                    helpers.wrap( 'bar', 100 ),
                     {
                         after: function( params, context, state ) {
-                            state.b = 401;
-                            state.c = 402;
-                            state.d = 403;
-                            state.g = 404;
+                            state.a = 101;
+                            state.b = [ 102 ];
+                            state.c = null;
+                            state.e = 103;
+                            state.f = [ 104 ];
+                            state.g = null;
+                            state.i = 105;
+                            state.j = [ 106 ];
+                            state.k = null;
                         }
                     }
                 );
+
                 var b3 = de.block(
                     helpers.wrap( function( params, context, state ) {
                         return state;
-                    }, 100 ),
+                    } ),
                     {
                         deps: [
                             {
                                 block: b1,
                                 select: {
-                                    b: '.x',
-                                    c: '.y',
-                                    f: '.z',
+                                    foo: de.jexpr( '.foo' ),
+                                    bar: de.jexpr( '.bar' ),
+                                    quu: de.jexpr( '.quu' )
                                 }
                             },
                             {
                                 block: b2,
                                 select: {
-                                    b: '.x',
-                                    d: '.y',
-                                    e: '.z'
+                                    foo: de.jexpr( '.foo' ),
+                                    bar: de.jexpr( '.bar' ),
+                                    quu: de.jexpr( '.quu' )
                                 }
                             }
                         ]
@@ -585,19 +586,20 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( [ b1, b2, b3 ] )
                     .then( function( result ) {
-                        expect( result ).to.be.eql( [
-                            { x: 101, y: 102, z: 103, w: 104 },
-                            { x: 201, y: 202, z: 203, w: 204 },
-                            {
-                                a: 1,
-                                b: 201,
-                                c: 402,
-                                d: 202,
-                                e: 203,
-                                f: 103,
-                                g: 404
-                            }
-                        ] );
+                        expect( result[ 2 ] ).to.be.eql( {
+                            a: [ 1, 101 ],
+                            b: [ 2, 102 ],
+                            c: [ 3, null ],
+                            d: 4,
+                            e: [ 5, 6, 103 ],
+                            f: [ 7, 8, 104 ],
+                            g: [ 9, 10, null ],
+                            h: [ 11, 12 ],
+                            i: [ null, 105 ],
+                            j: [ null, 106 ],
+                            k: [ null, null ],
+                            l: null
+                        } );
 
                         done();
                     } );
