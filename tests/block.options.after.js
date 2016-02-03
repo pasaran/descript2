@@ -19,19 +19,25 @@ describe( 'block', function() {
         describe( 'after', function() {
 
             it( 'single after', function( done ) {
-                var block = de.block(
-                    helpers.wrap( function( params, context ) {
-                        expect( context.state ).to.be.eql( {} );
+                var _state;
 
-                        context.state.foo = true;
+                var block = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        expect( _state ).to.be( undefined );
+                        _state = state;
+
+                        expect( state ).to.be.eql( {} );
+
+                        state.foo = true;
 
                         return 'foo';
                     }, 50 ),
                     {
-                        after: function( params, context ) {
-                            expect( context.state ).to.be.eql( { foo: true } );
+                        after: function( params, context, state ) {
+                            expect( state ).to.be( _state );
+                            expect( state ).to.be.eql( { foo: true } );
 
-                            context.state.bar = true;
+                            state.bar = true;
                         }
                     }
                 );
@@ -39,8 +45,8 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { foo: true, bar: true } );
-                        expect( result ).to.be.eql( 'foo' );
+                        expect( _state ).to.be.eql( { foo: true, bar: true } );
+                        expect( result ).to.be( 'foo' );
 
                         done();
                     } );
@@ -48,7 +54,7 @@ describe( 'block', function() {
 
             it( 'single after, block returns an error', function( done ) {
                 var block = de.block(
-                    helpers.wrap( function( params, context ) {
+                    helpers.wrap( function( params, context, state ) {
                         return de.error( ERROR_ID );
                     }, 50 ),
                     {
@@ -72,9 +78,7 @@ describe( 'block', function() {
                 var block = de.block(
                     helpers.wrap( 'foo', 50 ),
                     {
-                        after: function( params, context ) {
-                            context.state.bar = true;
-
+                        after: function( params, context, state ) {
                             return 'bar';
                         }
                     }
@@ -83,7 +87,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
@@ -95,8 +98,6 @@ describe( 'block', function() {
                     helpers.wrap( 'foo', 50 ),
                     {
                         after: function( params, context ) {
-                            context.state.bar = true;
-
                             return de.error( ERROR_ID );
                         }
                     }
@@ -105,7 +106,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
 
@@ -114,11 +114,24 @@ describe( 'block', function() {
             } );
 
             it( 'single after returning a promise', function( done ) {
+                var _state;
+
                 var block = de.block(
-                    helpers.wrap( 'foo', 50 ),
+                    helpers.wrap( function( params, context, state ) {
+                        expect( _state ).to.be( undefined );
+                        _state = state;
+
+                        expect( state ).to.be.eql( {} );
+                        state.foo = true;
+
+                        return 'foo';
+                    }, 50 ),
                     {
-                        after: helpers.wrap( function( params, context ) {
-                            context.state.bar = true;
+                        after: helpers.wrap( function( params, context, state ) {
+                            expect( state ).to.be( _state );
+                            expect( state ).to.be.eql( { foo: true } );
+
+                            state.bar = true;
                         }, 50 )
                     }
                 );
@@ -126,7 +139,7 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
+                        expect( _state ).to.be.eql( { foo: true, bar: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
@@ -137,18 +150,13 @@ describe( 'block', function() {
                 var block = de.block(
                     helpers.wrap( 'foo', 50 ),
                     {
-                        after: helpers.wrap( function( params, context ) {
-                            context.state.bar = true;
-
-                            return 'bar';
-                        }, 50 )
+                        after: helpers.wrap( 'bar', 50 )
                     }
                 );
 
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
@@ -159,9 +167,7 @@ describe( 'block', function() {
                 var block = de.block(
                     helpers.wrap( 'foo', 50 ),
                     {
-                        after: helpers.wrap( function( params, context ) {
-                            context.state.bar = true;
-
+                        after: helpers.wrap( function( params, context, state ) {
                             return de.error( ERROR_ID );
                         }, 50 )
                     }
@@ -170,7 +176,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
 
@@ -179,28 +184,35 @@ describe( 'block', function() {
             } );
 
             it( 'multiple after', function( done ) {
-                var block = de.block(
-                    helpers.wrap( function( params, context ) {
-                        expect( context.state ).to.be.eql( {} );
+                var _state;
 
-                        context.state.foo = true;
+                var block = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        expect( _state ).to.be( undefined );
+                        _state = state;
+
+                        expect( state ).to.be.eql( {} );
+
+                        state.foo = true;
 
                         return 'foo';
                     }, 50 ),
                     {
                         after: [
-                            function( params, context ) {
-                                expect( context.state ).to.be.eql( { foo: true } );
+                            function( params, context, state ) {
+                                expect( state ).to.be( _state );
+                                expect( state ).to.be.eql( { foo: true } );
 
-                                context.state.bar = true;
+                                state.bar = true;
 
                                 return 'bar';
                             },
 
-                            function( params, context ) {
-                                expect( context.state ).to.be.eql( { foo: true, bar: true } );
+                            function( params, context, state ) {
+                                expect( state ).to.be( _state );
+                                expect( state ).to.be.eql( { foo: true, bar: true } );
 
-                                context.state.quu = true;
+                                state.quu = true;
 
                                 return 'quu';
                             }
@@ -211,7 +223,7 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { foo: true, bar: true, quu: true } );
+                        expect( _state ).to.be.eql( { foo: true, bar: true, quu: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
@@ -223,13 +235,11 @@ describe( 'block', function() {
                     helpers.wrap( 'foo', 50 ),
                     {
                         after: [
-                            function( params, context ) {
-                                context.state.bar = true;
-
+                            function( params, context, state ) {
                                 return de.error( ERROR_ID );
                             },
 
-                            function( params, context ) {
+                            function( params, context, state ) {
                                 throw Error( 'error' );
                             }
                         ]
@@ -239,7 +249,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true } );
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
 
@@ -252,13 +261,11 @@ describe( 'block', function() {
                     helpers.wrap( 'foo', 50 ),
                     {
                         after: [
-                            function( params, context ) {
-                                context.state.bar = true;
+                            function( params, context, state ) {
+                                return 'bar';
                             },
 
-                            function( params, context ) {
-                                context.state.quu = true;
-
+                            function( params, context, state ) {
                                 return de.error( ERROR_ID );
                             }
                         ]
@@ -268,7 +275,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( block )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true, quu: true } );
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
 
@@ -277,35 +283,46 @@ describe( 'block', function() {
             } );
 
             it( 'single after and single inherited after', function( done ) {
-                var b1 = de.block(
-                    helpers.wrap( function( params, context ) {
-                        expect( context.state ).to.be.eql( {} );
+                var _state;
 
-                        context.state.foo = true;
+                var b1 = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        expect( _state ).to.be( undefined );
+                        _state = state;
+
+                        expect( state ).to.be.eql( {} );
+
+                        state.foo = true;
 
                         return 'foo';
                     }, 50 ),
                     {
-                        after: function( params, context ) {
-                            expect( context.state ).to.be.eql( { foo: true } );
+                        after: function( params, context, state ) {
+                            expect( state ).to.be( _state );
+                            expect( state ).to.be.eql( { foo: true } );
 
-                            context.state.bar = true;
+                            state.bar = true;
+
+                            return 'bar';
                         }
                     }
                 );
 
                 var b2 = b1( {
-                    after: function( params, context ) {
-                        expect( context.state ).to.be.eql( { foo: true, bar: true } );
+                    after: function( params, context, state ) {
+                        expect( state ).to.be( _state );
+                        expect( state ).to.be.eql( { foo: true, bar: true } );
 
-                        context.state.quu = true;
+                        state.quu = true;
+
+                        return 'quu';
                     }
                 } );
 
                 var context = helpers.context();
                 context.run( b2 )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { foo: true, bar: true, quu: true } );
+                        expect( _state ).to.be.eql( { foo: true, bar: true, quu: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
@@ -317,15 +334,13 @@ describe( 'block', function() {
                     helpers.wrap( 'foo', 50 ),
                     {
                         after: function( params, context ) {
-                            context.state.bar = true;
+                            return 'bar';
                         }
                     }
                 );
 
                 var b2 = b1( {
                     after: function( params, context ) {
-                        context.state.quu = true;
-
                         return de.error( ERROR_ID );
                     }
                 } );
@@ -333,7 +348,6 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( b2 )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { bar: true, quu: true } );
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
 
@@ -346,8 +360,6 @@ describe( 'block', function() {
                     helpers.wrap( 'foo', 50 ),
                     {
                         after: function( params, context ) {
-                            context.state.bar = true;
-
                             return de.error( ERROR_ID );
                         }
                     }
@@ -364,33 +376,39 @@ describe( 'block', function() {
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.id ).to.be.eql( ERROR_ID );
-                        expect( context.state ).to.be.eql( { bar: true } );
 
                         done();
                     } );
             } );
 
             it( 'multiple after and multiple inherited after', function( done ) {
-                var b1 = de.block(
-                    helpers.wrap( function( params, context ) {
-                        expect( context.state ).to.be.eql( {} );
+                var _state;
 
-                        context.state.c0 = true;
+                var b1 = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        expect( _state ).to.be( undefined );
+                        _state = state;
+
+                        expect( state ).to.be.eql( {} );
+
+                        state.c0 = true;
 
                         return 'foo';
                     }, 50 ),
                     {
                         after: [
-                            function( params, context ) {
-                                expect( context.state ).to.be.eql( { c0: true } );
+                            function( params, context, state ) {
+                                expect( state ).to.be( _state );
+                                expect( state ).to.be.eql( { c0: true } );
 
-                                context.state.c1 = true;
+                                state.c1 = true;
                             },
 
-                            function( params, context ) {
-                                expect( context.state ).to.be.eql( { c0: true, c1: true } );
+                            function( params, context, state ) {
+                                expect( state ).to.be( _state );
+                                expect( state ).to.be.eql( { c0: true, c1: true } );
 
-                                context.state.c2 = true;
+                                state.c2 = true;
                             }
                         ]
                     }
@@ -398,16 +416,18 @@ describe( 'block', function() {
 
                 var b2 = b1( {
                     after: [
-                        function( params, context ) {
-                            expect( context.state ).to.be.eql( { c0: true, c1: true, c2: true } );
+                        function( params, context, state ) {
+                            expect( state ).to.be( _state );
+                            expect( state ).to.be.eql( { c0: true, c1: true, c2: true } );
 
-                            context.state.c3 = true;
+                            state.c3 = true;
                         },
 
-                        function( params, context ) {
-                            expect( context.state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true } );
+                        function( params, context, state ) {
+                            expect( state ).to.be( _state );
+                            expect( state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true } );
 
-                            context.state.c4 = true;
+                            state.c4 = true;
                         }
                     ]
                 } );
@@ -415,7 +435,7 @@ describe( 'block', function() {
                 var context = helpers.context();
                 context.run( b2 )
                     .then( function( result ) {
-                        expect( context.state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true, c4: true } );
+                        expect( _state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true, c4: true } );
                         expect( result ).to.be.eql( 'foo' );
 
                         done();
