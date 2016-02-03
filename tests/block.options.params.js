@@ -2,13 +2,17 @@ var no = require( 'nommon' );
 
 var expect = require( 'expect.js' );
 
-var de = require( '../lib/blocks/index.js' );
+var de = require( '../lib/index.js' );
+
+var helpers = require( './_helpers.js' );
+
+//  ---------------------------------------------------------------------------------------------------------------  //
 
 describe( 'block', function() {
 
-    describe( 'options', function() {
+    describe( 'options.params', function() {
 
-        describe( 'params and valid_params', function() {
+        describe( 'block._params()', function() {
 
             it( 'no params or valid_params', function() {
                 var block = new de.Block();
@@ -214,45 +218,19 @@ describe( 'block', function() {
                 } );
             } );
 
-            it( 'options.params as jexpr', function() {
-                var block = new de.Block( null, {
-                    params: no.jpath.expr( {
-                        a: '.foo',
-                        b: 'context.bar',
-                        c: 'state.quu'
-                    } )
-                } );
-
-                var params = block._params(
-                    { foo: 42 },
-                    {
-                        context: { bar: 24 },
-                        state: { quu: 66 }
-                    }
-                );
-
-                expect( params ).to.be.eql( {
-                    a: 42,
-                    b: 24,
-                    c: 66
-                } );
-            } );
-
             it( 'options.params with jexpr', function() {
                 var block = new de.Block( null, {
                     params: {
-                        a: no.jpath.expr( '.foo' ),
-                        b: no.jpath.expr( 'context.bar' ),
-                        c: no.jpath.expr( 'state.quu' )
+                        a: de.jexpr( 'params.foo' ),
+                        b: de.jexpr( 'context.bar' ),
+                        c: de.jexpr( 'state.quu' )
                     }
                 } );
 
                 var params = block._params(
                     { foo: 42 },
-                    {
-                        context: { bar: 24 },
-                        state: { quu: 66 }
-                    }
+                    { bar: 24 },
+                    { quu: 66 }
                 );
 
                 expect( params ).to.be.eql( {
@@ -261,6 +239,42 @@ describe( 'block', function() {
                     b: 24,
                     c: 66
                 } );
+            } );
+
+        } );
+
+        describe( 'options.params', function() {
+
+            it( 'params from state and context', function( done ) {
+                var block = de.block(
+                    helpers.wrap( function( params, context, state ) {
+                        return params;
+                    }, 50 ),
+                    {
+                        valid_params: [ 'a', 'b', 'c' ],
+                        params: {
+                            a: de.jexpr( 'params.foo' ),
+                            b: de.jexpr( 'state.bar' ),
+                            c: de.jexpr( 'context.quu' )
+                        },
+                        before: function( params, context, state ) {
+                            state.bar = 24;
+                            context.quu = 66;
+                        }
+                    }
+                );
+
+                var context = helpers.context();
+                context.run( block, { foo: 42 } )
+                    .then( function( result ) {
+                        expect( result ).to.be.eql( {
+                            a: 42,
+                            b: 24,
+                            c: 66
+                        } );
+
+                        done();
+                    } );
             } );
 
         } );
