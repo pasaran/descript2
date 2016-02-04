@@ -29,139 +29,135 @@ var files = {
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-describe( 'block', function() {
+describe( 'block.file', function() {
 
-    describe( 'file', function() {
+    it( 'read text file, relative filename with dirname', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: 'files/hello.txt'
+            },
+            {
+                dirname: __dirname
+            }
+        );
 
-        it( 'read text file, relative filename with dirname', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: 'files/hello.txt'
-                },
-                {
-                    dirname: __dirname
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be( files.hello );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be( files.hello );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read text file, absolute path', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: resolve( 'files/hello.txt' )
+            }
+        );
 
-        it( 'read text file, absolute path', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: resolve( 'files/hello.txt' )
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be( files.hello );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be( files.hello );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read unexisted file', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: resolve( 'files/not-found.txt' )
+            }
+        );
 
-        it( 'read unexisted file', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: resolve( 'files/not-found.txt' )
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be.a( de.Error );
+                expect( result.error.code ).to.be( 'ENOENT' );
+                expect( result.error.syscall ).to.be( 'open' );
 
-                    expect( result.error.code ).to.be( 'ENOENT' );
-                    expect( result.error.syscall ).to.be( 'open' );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read unreadable file', function( done ) {
+        var filename = resolve( 'files/not-readable.txt' );
 
-        it( 'read unreadable file', function( done ) {
-            var filename = resolve( 'files/not-readable.txt' );
+        fs_.writeFileSync( filename, 'Hello', 'utf-8' );
+        fs_.chmodSync( filename, 0222 );
 
-            fs_.writeFileSync( filename, 'Hello', 'utf-8' );
-            fs_.chmodSync( filename, 0222 );
+        var block = new de.Block.File(
+            {
+                filename: filename
+            }
+        );
 
-            var block = new de.Block.File(
-                {
-                    filename: filename
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be.a( de.Error );
+                expect( result.error.code ).to.be( 'EACCES' );
+                expect( result.error.syscall ).to.be( 'open' );
 
-                    expect( result.error.code ).to.be( 'EACCES' );
-                    expect( result.error.syscall ).to.be( 'open' );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read json file', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: resolve( 'files/hello.json' )
+            }
+        );
 
-        it( 'read json file', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: resolve( 'files/hello.json' )
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.eql( read_as_json( 'files/hello.json' ) );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be.eql( read_as_json( 'files/hello.json' ) );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read text file with json', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: resolve( 'files/hello.json.txt' ),
+                is_json: true
+            }
+        );
 
-        it( 'read text file with json', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: resolve( 'files/hello.json.txt' ),
-                    is_json: true
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.eql( read_as_json( 'files/hello.json.txt' ) );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be.eql( read_as_json( 'files/hello.json.txt' ) );
+                done();
+            } );
+    } );
 
-                    done();
-                } );
-        } );
+    it( 'read text file with invalid json', function( done ) {
+        var block = new de.Block.File(
+            {
+                filename: resolve( 'files/hello.txt' ),
+                is_json: true
+            }
+        );
 
-        it( 'read text file with invalid json', function( done ) {
-            var block = new de.Block.File(
-                {
-                    filename: resolve( 'files/hello.txt' ),
-                    is_json: true
-                }
-            );
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'INVALID_JSON' );
 
-            var context = helpers.context();
-            context.run( block )
-                .then( function( result ) {
-                    expect( result ).to.be.a( de.Error );
-                    expect( result.error.id ).to.be( 'INVALID_JSON' );
-
-                    done();
-                } );
-        } );
-
+                done();
+            } );
     } );
 
 } );

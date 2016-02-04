@@ -1,28 +1,28 @@
-TESTS = block.options.params \
-	block.options.select \
-	block.options.deps \
-	block.options.before \
-	block.options.after \
+TESTS = options.params \
+	options.select \
+	options.deps \
+	options.before \
+	options.after \
 	block.http \
 	block.file \
 	request
 
 tests: $(TESTS)
 
-block.options.params:
-	node_modules/.bin/mocha tests/block.options.params.js
+options.params:
+	node_modules/.bin/mocha tests/options.params.js
 
-block.options.select:
-	node_modules/.bin/mocha tests/block.options.select.js
+options.select:
+	node_modules/.bin/mocha tests/options.select.js
 
-block.options.deps:
-	node_modules/.bin/mocha tests/block.options.deps.js
+options.deps:
+	node_modules/.bin/mocha tests/options.deps.js
 
-block.options.before:
-	node_modules/.bin/mocha tests/block.options.before.js
+options.before:
+	node_modules/.bin/mocha tests/options.before.js
 
-block.options.after:
-	node_modules/.bin/mocha tests/block.options.after.js
+options.after:
+	node_modules/.bin/mocha tests/options.after.js
 
 block.http:
 	node_modules/.bin/mocha --delay tests/block.http.js
