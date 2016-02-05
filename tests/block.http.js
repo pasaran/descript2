@@ -9,18 +9,19 @@ var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
 
+var Fake = require( '../lib/de.fake.js' );
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var Fake = require( '../lib/de.fake.js' );
-var fake = new Fake();
+var port = helpers.port;
 
-var port = helpers.port();
+var fake = new Fake( { port: port } );
 
 var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-fake.listen( port, '0.0.0.0', function() {
+fake.start( function() {
 
     describe( 'block.http', function() {
 
@@ -549,6 +550,6 @@ fake.listen( port, '0.0.0.0', function() {
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 after( function() {
-    fake.close();
+    fake.stop();
 } );
 
