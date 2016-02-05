@@ -514,6 +514,28 @@ fake.start( function() {
                     } );
             } );
 
+            it( 'connection closed', function( done ) {
+                var path = `/error/${ n++ }`;
+
+                fake.add( path, {
+                    wait: 1000,
+                    timeout: 100
+                } );
+
+                var context = helpers.context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.id ).to.be( 'HTTP_UNKNOWN_ERROR' );
+
+                        done();
+                    } );
+            } );
         } );
 
         describe( 'redirect', function() {
