@@ -5,6 +5,7 @@ TESTS = options.params \
 	options.after \
 	options.guard \
 	options.result \
+	options.cache \
 	block.http \
 	block.file \
 	request
@@ -31,6 +32,9 @@ options.guard:
 
 options.result:
 	node_modules/.bin/mocha tests/options.result.js
+
+options.cache:
+	node_modules/.bin/mocha tests/options.cache.js
 
 block.http:
 	node_modules/.bin/mocha --delay tests/block.http.js

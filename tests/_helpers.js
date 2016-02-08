@@ -31,8 +31,8 @@ module.exports.wrap = function( callback, timeout ) {
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-module.exports.context = function() {
-    var context = new de.Context();
+module.exports.context = function( config ) {
+    var context = new de.Context.Base( config );
 
     context.logger.set_level( de.Logger.LEVEL.OFF );
 
