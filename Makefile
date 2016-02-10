@@ -8,7 +8,8 @@ TESTS = options.params \
 	options.cache \
 	block.http \
 	block.file \
-	request
+	request \
+	context
 
 tests: $(TESTS)
 
@@ -44,6 +45,9 @@ block.file:
 
 request:
 	node_modules/.bin/mocha --delay tests/request.js
+
+context:
+	node_modules/.bin/mocha --delay tests/context.js
 
 .PHONY: tests $(TESTS)
 

@@ -17,12 +17,12 @@ describe( 'options.cache', function() {
     var n = 0;
 
     it( 'async get', function( done ) {
+        var key = `key-${ n++ }`;
+
         var _calls = 0;
         var _result = {
             foo: true
         };
-
-        var key = `key-${ n++ }`;
 
         var block = de.block(
             helpers.wrap( function() {
