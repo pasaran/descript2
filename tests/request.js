@@ -518,6 +518,28 @@ fake.start( function() {
                         done();
                     } );
             } );
+
+            it( 'abort', function( done ) {
+                var path = `/error/${ n++ }`;
+
+                fake.add( path, {
+                    wait: 5000,
+                    content: hello_string
+                } );
+
+                var promise = de.request( `${ base_url }${ path }`, logger );
+                promise.then( function( result ) {
+                    expect( result ).to.be.a( no.Error );
+                    expect( result.error.id ).to.be( 'HTTP_REQUEST_ABORTED' );
+
+                    done();
+                } );
+
+                setTimeout( function() {
+                    promise.trigger( 'abort' );
+                }, 100 );
+            } );
+
         } );
 
         describe( 'redirect', function() {
