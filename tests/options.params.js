@@ -26,46 +26,46 @@ describe( 'options.params', function() {
         expect( params ).not.to.be( raw_params );
     } );
 
-    it( 'options.valid_params is an array', function() {
-        var block = new de.Block( null, {
-            valid_params: [ 'a', 'b' ]
-        } );
-
-        var raw_params = {
-            a: 42,
-            b: 'hello',
-            c: '',
-            d: 0
-        };
-
-        var params = block._params( raw_params );
-
-        expect( params ).to.be.eql( {
-            a: 42,
-            b: 'hello'
-        } );
-    } );
-
-    it( 'options.valid_params is an object', function() {
+    it( 'options.valid_params', function() {
         var block = new de.Block( null, {
             valid_params: {
+                a: null,
+                b: null,
                 c: null,
-                d: null
+                d: null,
+                e: null,
+                f: null,
+                g: null
             }
         } );
 
         var raw_params = {
             a: 42,
             b: 'hello',
-            c: '',
-            d: 0
+            c: true,
+            d: '',
+            e: 0,
+            f: false,
+            g: null,
+
+            i: 24,
+            j: 'bye',
+            k: true,
+            l: '',
+            m: 0,
+            n: false,
+            o: null
         };
 
         var params = block._params( raw_params );
 
         expect( params ).to.be.eql( {
-            c: '',
-            d: 0
+            a: 42,
+            b: 'hello',
+            c: true,
+            d: '',
+            e: 0,
+            f: false
         } );
     } );
 
@@ -119,7 +119,9 @@ describe( 'options.params', function() {
 
     it( 'options.params and options.valid_params', function() {
         var block = new de.Block( null, {
-            valid_params: [ 'd' ],
+            valid_params: {
+                d: null
+            },
             params: {
                 a: 42,
                 b: function( params ) {
@@ -171,7 +173,9 @@ describe( 'options.params', function() {
 
     it( 'options.params is a function and options.valid_params', function() {
         var block = new de.Block( null, {
-            valid_params: [ 'c' ],
+            valid_params: {
+                c: null
+            },
             params: function( params ) {
                 return {
                     a: 42,
@@ -243,7 +247,11 @@ describe( 'options.params', function() {
                 return params;
             }, 50 ),
             {
-                valid_params: [ 'a', 'b', 'c' ],
+                valid_params: {
+                    a: null,
+                    b: null,
+                    c: null
+                },
                 params: {
                     a: de.jexpr( 'params.foo' ),
                     b: de.jexpr( 'state.bar' ),
