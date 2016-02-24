@@ -10,7 +10,8 @@ TESTS = options.params \
 	block.http \
 	block.file \
 	request \
-	context
+	context \
+	dir-config
 
 tests: $(TESTS)
 
@@ -52,6 +53,9 @@ request:
 
 context:
 	node_modules/.bin/mocha --delay tests/context.js
+
+dir-config:
+	node_modules/.bin/mocha tests/dir-config.js
 
 .PHONY: tests $(TESTS)
 
