@@ -18,7 +18,7 @@ describe( 'options.select', function() {
         var _state;
         var _result = {};
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( _result ),
             {
                 before: function( params, context, state ) {
@@ -59,7 +59,7 @@ describe( 'options.select', function() {
     it( 'select with jexpr', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 a: 1,
                 b: null
@@ -102,7 +102,7 @@ describe( 'options.select', function() {
     it( 'select with jexprs #1', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 a: 1,
                 b: null
@@ -145,7 +145,7 @@ describe( 'options.select', function() {
     it( 'select with jexprs #2', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 id: 1,
                 foo: {
@@ -181,7 +181,7 @@ describe( 'options.select', function() {
     it( 'select existing key #1', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
@@ -212,7 +212,7 @@ describe( 'options.select', function() {
     it( 'select existing key #2', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
@@ -243,7 +243,7 @@ describe( 'options.select', function() {
     it( 'select existing key #3', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
@@ -274,7 +274,7 @@ describe( 'options.select', function() {
     it( 'select existing key #4', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
@@ -306,7 +306,7 @@ describe( 'options.select', function() {
         var _state;
         var ids = [ 1, 2, 3 ];
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( 'foo' ),
             {
                 before: function( params, context, state ) {
@@ -335,7 +335,7 @@ describe( 'options.select', function() {
         var _state;
         var ids = [ 1, 2, 3 ];
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( 'foo' ),
             {
                 before: function( params, context, state ) {
@@ -363,7 +363,7 @@ describe( 'options.select', function() {
     it( 'select existing key #7', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: [
                     { id: 1 },
@@ -396,7 +396,7 @@ describe( 'options.select', function() {
     it( 'select existing key #8', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( {
                 items: [
                     { id: 1 },
@@ -431,14 +431,14 @@ describe( 'options.select', function() {
 describe( 'options.deps.select', function() {
 
     it( 'select from two parents #1', function( done ) {
-        var b1 = de.block(
+        var b1 = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
                 }
             }, 50 )
         );
-        var b2 = de.block(
+        var b2 = de.func(
             helpers.wrap( {
                 items: {
                     id: 2
@@ -446,7 +446,7 @@ describe( 'options.deps.select', function() {
             }, 100 )
         );
 
-        var b3 = de.block(
+        var b3 = de.func(
             helpers.wrap( function( params, context, state ) {
                 return state;
             } ),
@@ -469,7 +469,7 @@ describe( 'options.deps.select', function() {
         );
 
         var context = helpers.context();
-        context.run( [ b1, b2, b3 ] )
+        context.run( de.array( [ b1, b2, b3 ] ) )
             .then( function( result ) {
                 expect( result[ 2 ] ).to.be.eql( {
                     ids: 2
@@ -480,14 +480,14 @@ describe( 'options.deps.select', function() {
     } );
 
     it( 'select from two parents #2', function( done ) {
-        var b1 = de.block(
+        var b1 = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
                 }
             }, 50 )
         );
-        var b2 = de.block(
+        var b2 = de.func(
             helpers.wrap( {
                 items: {
                     id: 2
@@ -495,7 +495,7 @@ describe( 'options.deps.select', function() {
             }, 100 )
         );
 
-        var b3 = de.block(
+        var b3 = de.func(
             helpers.wrap( function( params, context, state ) {
                 return state;
             } ),
@@ -518,7 +518,7 @@ describe( 'options.deps.select', function() {
         );
 
         var context = helpers.context();
-        context.run( [ b1, b2, b3 ] )
+        context.run( de.array( [ b1, b2, b3 ] ) )
             .then( function( result ) {
                 expect( result[ 2 ] ).to.be.eql( {
                     ids: [ 1, 2 ]
@@ -529,14 +529,14 @@ describe( 'options.deps.select', function() {
     } );
 
     it( 'select from two parents #3', function( done ) {
-        var b1 = de.block(
+        var b1 = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
                 }
             }, 50 )
         );
-        var b2 = de.block(
+        var b2 = de.func(
             helpers.wrap( {
                 items: {
                     id: 2
@@ -544,7 +544,7 @@ describe( 'options.deps.select', function() {
             }, 100 )
         );
 
-        var b3 = de.block(
+        var b3 = de.func(
             helpers.wrap( function( params, context, state ) {
                 return state;
             } ),
@@ -567,7 +567,7 @@ describe( 'options.deps.select', function() {
         );
 
         var context = helpers.context();
-        context.run( [ b1, b2, b3 ] )
+        context.run( de.array( [ b1, b2, b3 ] ) )
             .then( function( result ) {
                 expect( result[ 2 ] ).to.be.eql( {
                     ids: [ 2 ]
@@ -578,14 +578,14 @@ describe( 'options.deps.select', function() {
     } );
 
     it( 'select from two parents #4', function( done ) {
-        var b1 = de.block(
+        var b1 = de.func(
             helpers.wrap( {
                 items: {
                     id: 1
                 }
             }, 50 )
         );
-        var b2 = de.block(
+        var b2 = de.func(
             helpers.wrap( {
                 items: {
                     id: 2
@@ -593,7 +593,7 @@ describe( 'options.deps.select', function() {
             }, 100 )
         );
 
-        var b3 = de.block(
+        var b3 = de.func(
             helpers.wrap( function( params, context, state ) {
                 return state;
             } ),
@@ -616,7 +616,7 @@ describe( 'options.deps.select', function() {
         );
 
         var context = helpers.context();
-        context.run( [ b1, b2, b3 ] )
+        context.run( de.array( [ b1, b2, b3 ] ) )
             .then( function( result ) {
                 expect( result[ 2 ] ).to.be.eql( {
                     ids: [ 1, 2 ]

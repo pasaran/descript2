@@ -8,10 +8,16 @@ var helpers = require( './_helpers.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.value( block, options )._compile();
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 describe( 'options.params', function() {
 
     it( 'no params or valid_params', function() {
-        var block = new de.Block();
+        var block = create_block( null );
 
         var raw_params = {
             a: 42,
@@ -27,7 +33,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.valid_params', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             valid_params: {
                 a: null,
                 b: null,
@@ -70,7 +76,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.valid_params with defaul values', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             valid_params: {
                 a: null,
                 b: 24
@@ -91,7 +97,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             params: {
                 a: 42,
                 b: function( params ) {
@@ -118,7 +124,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params and options.valid_params', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             valid_params: {
                 d: null
             },
@@ -147,7 +153,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params is a function', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             params: function( params ) {
                 return {
                     a: 42,
@@ -172,7 +178,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params is a function and options.valid_params', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             valid_params: {
                 c: null
             },
@@ -200,7 +206,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params with null', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             params: {
                 a: null
             }
@@ -219,7 +225,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'options.params with jexpr', function() {
-        var block = new de.Block( null, {
+        var block = create_block( null, {
             params: {
                 a: de.jexpr( 'params.foo' ),
                 b: de.jexpr( 'context.bar' ),
@@ -242,7 +248,7 @@ describe( 'options.params', function() {
     } );
 
     it( 'params from state and context', function( done ) {
-        var block = de.block(
+        var block = de.func(
             helpers.wrap( function( params, context, state ) {
                 return params;
             }, 50 ),

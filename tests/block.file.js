@@ -29,10 +29,16 @@ var files = {
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.file( block, options )._compile();
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 describe( 'block.file', function() {
 
     it( 'read text file, relative filename with dirname', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: 'files/hello.txt'
             },
@@ -51,7 +57,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file, absolute path', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: resolve( 'files/hello.txt' )
             }
@@ -67,7 +73,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read unexisted file', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: resolve( 'files/not-found.txt' )
             }
@@ -91,7 +97,7 @@ describe( 'block.file', function() {
         fs_.writeFileSync( filename, 'Hello', 'utf-8' );
         fs_.chmodSync( filename, 0222 );
 
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: filename
             }
@@ -110,7 +116,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read json file', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: resolve( 'files/hello.json' )
             }
@@ -126,7 +132,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file with json', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: resolve( 'files/hello.json.txt' ),
                 is_json: true
@@ -143,7 +149,7 @@ describe( 'block.file', function() {
     } );
 
     it( 'read text file with invalid json', function( done ) {
-        var block = new de.Block.File(
+        var block = create_block(
             {
                 filename: resolve( 'files/hello.txt' ),
                 is_json: true

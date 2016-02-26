@@ -21,6 +21,12 @@ var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.http( block, options )._compile();
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 fake.start( function() {
 
     describe( 'block.http', function() {
@@ -37,7 +43,7 @@ fake.start( function() {
                 content: content,
             } );
 
-            var block = new de.Block.Http( `${ base_url }${ path }` );
+            var block = create_block( `${ base_url }${ path }` );
 
             var context = helpers.context();
             context.run( block )
@@ -58,7 +64,7 @@ fake.start( function() {
                 content: content,
             } );
 
-            var block = new de.Block.Http( function( params ) {
+            var block = create_block( function( params ) {
                 return {
                     url: `${ base_url }${ path }/${ params.id }`
                 };
@@ -83,7 +89,7 @@ fake.start( function() {
                 content: content,
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`
             } );
 
@@ -106,7 +112,7 @@ fake.start( function() {
                 content: content,
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 only_meta: true
             } );
@@ -133,7 +139,7 @@ fake.start( function() {
                 content: JSON.stringify( content ),
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 is_json: true
             } );
@@ -155,7 +161,7 @@ fake.start( function() {
                 content: '{"foo":&'
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 is_json: true
             } );
@@ -184,7 +190,7 @@ fake.start( function() {
                 content: content
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`
             } );
 
@@ -207,7 +213,7 @@ fake.start( function() {
                 content: content
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }/{ .id }`
             } );
 
@@ -234,7 +240,7 @@ fake.start( function() {
                 done();
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 query: {
                     foo: no.jpath.expr( '.bar' ),
@@ -272,7 +278,7 @@ fake.start( function() {
                 done();
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
                 query: {
@@ -309,7 +315,7 @@ fake.start( function() {
                 done();
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
                 body: {
@@ -350,7 +356,7 @@ fake.start( function() {
                 done();
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 method: 'POST',
                 query: {
@@ -384,7 +390,7 @@ fake.start( function() {
                 content: content
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 0
             } );
@@ -414,7 +420,7 @@ fake.start( function() {
                 content: content
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 0,
                 only_meta: true
@@ -446,7 +452,7 @@ fake.start( function() {
                 content: content
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }/foo`,
                 max_redirects: 1
             } );
@@ -467,7 +473,7 @@ fake.start( function() {
                 status_code: 404
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`
             } );
 
@@ -491,7 +497,7 @@ fake.start( function() {
                 status_code: 404
             } );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 max_retries: 1
             } );
@@ -524,7 +530,7 @@ fake.start( function() {
                 }
             ] );
 
-            var block = new de.Block.Http( {
+            var block = create_block( {
                 url: `${ base_url }${ path }`,
                 max_retries: 1,
                 is_retry_allowed: function() {
