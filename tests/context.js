@@ -16,7 +16,18 @@ var fake = new Fake( { port: port } );
 
 var base_url = `http://127.0.0.1:${ port }`;
 
-var logger = new de.Logger( de.Logger.LEVEL.OFF );
+//  ---------------------------------------------------------------------------------------------------------------  //
+
+var log = new de.Log( {
+    off: true,
+    debug: false
+} );
+
+function create_context() {
+    return new de.Context.Base( {
+        log: log
+    } );
+}
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -47,7 +58,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.headers[ 'content-type' ] ).to.be( 'text/plain' );
@@ -76,7 +93,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.headers[ 'content-type' ] ).to.be( 'text/html' );
@@ -107,7 +130,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.headers[ 'content-type' ] ).to.be( 'application/json' );
@@ -160,12 +189,13 @@ fake.start( function() {
                     }
                 } );
 
+                var context = create_context();
                 de.request(
                     {
                         url: `${ base_url }${ path }`,
                         max_redirects: 0
                     },
-                    logger
+                    context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 302 );
@@ -215,12 +245,13 @@ fake.start( function() {
                     }
                 } );
 
+                var context = create_context();
                 de.request(
                     {
                         url: `${ base_url }${ path }`,
                         max_redirects: 0
                     },
-                    logger
+                    context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 302 );
@@ -268,13 +299,14 @@ fake.start( function() {
                     }
                 } );
 
+                var context = create_context();
                 de.request(
                     {
                         method: 'POST',
                         url: `${ base_url }${ path }`,
                         max_redirects: 0
                     },
-                    logger
+                    context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 303 );
@@ -325,12 +357,13 @@ fake.start( function() {
                     }
                 } );
 
+                var context = create_context();
                 de.request(
                     {
                         url: `${ base_url }${ path }`,
                         max_redirects: 0
                     },
-                    logger
+                    context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 307 );
@@ -381,13 +414,14 @@ fake.start( function() {
                     }
                 } );
 
+                var context = create_context();
                 de.request(
                     {
                         method: 'POST',
                         url: `${ base_url }${ path }`,
                         max_redirects: 0
                     },
-                    logger
+                    context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 307 );
@@ -400,7 +434,7 @@ fake.start( function() {
 
         } );
 
-        describe( 'context.error()', function() {
+        describe( 'context.abort()', function() {
 
             it ( 'argument is a string', function( done ) {
                 done = helpers.wrap_done( done, 2 );
@@ -418,7 +452,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( ERROR_ID );
+                                        context.abort( ERROR_ID );
                                     },
 
                                     function( params, context, state ) {
@@ -431,6 +465,7 @@ fake.start( function() {
                         var context = new de.Context( req, res );
                         return context.run( block )
                             .then( function( result ) {
+                                console.log( result );
                                 expect( result ).to.be.a( de.Error );
                                 expect( result.error.id ).to.be( ERROR_ID );
 
@@ -439,7 +474,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );
@@ -468,7 +509,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             id: ERROR_ID
                                         } );
                                     },
@@ -491,7 +532,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );
@@ -520,7 +567,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             fatal: true
                                         } );
                                     },
@@ -543,7 +590,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );
@@ -572,7 +625,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             id: ERROR_ID,
                                             status_code: 503
                                         } );
@@ -596,7 +649,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 503 );
@@ -626,7 +685,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             id: ERROR_ID,
                                             body: body
                                         } );
@@ -650,7 +709,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );
@@ -678,7 +743,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             id: ERROR_ID,
                                             body: body
                                         } );
@@ -702,7 +767,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );
@@ -729,7 +800,7 @@ fake.start( function() {
                             {
                                 before: [
                                     function( params, context, state ) {
-                                        context.error( {
+                                        context.abort( {
                                             id: ERROR_ID,
                                             content_type: 'text/error'
                                         } );
@@ -753,7 +824,13 @@ fake.start( function() {
                     }
                 } );
 
-                de.request( `${ base_url }${ path }`, logger )
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`
+                    },
+                    context
+                )
                     .then( function( result ) {
                         expect( result ).to.be.a( de.Error );
                         expect( result.error.status_code ).to.be( 500 );

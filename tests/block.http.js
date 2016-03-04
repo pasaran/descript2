@@ -21,8 +21,20 @@ var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+var log = new de.Log( {
+    debug: true
+} );
+
+function create_context( config ) {
+    var context = new de.Context.Base( {
+        log: log
+    } );
+
+    return context;
+}
+
 function create_block( block, options ) {
-    return de.http( block, options )._compile();
+    return de.http( block, options );
 }
 
 //  ---------------------------------------------------------------------------------------------------------------  //
@@ -45,7 +57,7 @@ fake.start( function() {
 
             var block = create_block( `${ base_url }${ path }` );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( content );
@@ -70,7 +82,7 @@ fake.start( function() {
                 };
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, { id: 42 } )
                 .then( function( result ) {
                     expect( result ).to.be( content );
@@ -93,7 +105,7 @@ fake.start( function() {
                 url: `${ base_url }${ path }`
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( content );
@@ -117,7 +129,7 @@ fake.start( function() {
                 only_meta: true
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result.status_code ).to.be( 200 );
@@ -144,7 +156,7 @@ fake.start( function() {
                 is_json: true
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.eql( content );
@@ -166,7 +178,7 @@ fake.start( function() {
                 is_json: true
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
@@ -194,7 +206,7 @@ fake.start( function() {
                 url: `${ base_url }${ path }`
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.eql( content );
@@ -217,7 +229,7 @@ fake.start( function() {
                 url: `${ base_url }${ path }/{ .id }`
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, { id: 42 } )
                 .then( function( result ) {
                     expect( result ).to.be.eql( content );
@@ -248,7 +260,7 @@ fake.start( function() {
                 }
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, {
                 foo: 24,
                 bar: 42
@@ -287,7 +299,7 @@ fake.start( function() {
                 }
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, params );
         } );
 
@@ -325,7 +337,7 @@ fake.start( function() {
                 }
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, params );
         } );
 
@@ -370,7 +382,7 @@ fake.start( function() {
                 }
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block, params );
         } );
 
@@ -395,7 +407,7 @@ fake.start( function() {
                 max_redirects: 0
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.eql( null );
@@ -426,7 +438,7 @@ fake.start( function() {
                 only_meta: true
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result.status_code ).to.be( 302 );
@@ -457,7 +469,7 @@ fake.start( function() {
                 max_redirects: 1
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( content );
@@ -477,7 +489,7 @@ fake.start( function() {
                 url: `${ base_url }${ path }`
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( no.Error );
@@ -502,7 +514,7 @@ fake.start( function() {
                 max_retries: 1
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( no.Error );
@@ -538,7 +550,7 @@ fake.start( function() {
                 }
             } );
 
-            var context = helpers.context();
+            var context = create_context();
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be( content );

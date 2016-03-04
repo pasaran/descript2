@@ -27,17 +27,15 @@ module.exports.wrap = function( callback, timeout ) {
             return no.promise.resolved( value );
         }
     };
-}
+};
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 module.exports.context = function( config ) {
     var context = new de.Context.Base( config );
 
-    context.logger.set_level( de.Logger.LEVEL.OFF );
-
     return context;
-}
+};
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -47,7 +45,7 @@ module.exports.wrap_done = function( done, n ) {
             done();
         }
     };
-}
+};
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 

@@ -3,13 +3,14 @@ var no = require( 'nommon' );
 var expect = require( 'expect.js' );
 
 var de = require( '../lib/index.js' );
+require( '../lib/de.cacher.js' );
 
 var helpers = require( './_helpers.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var async_cacher = new de.Cacher.BaseAsync();
-var sync_cacher = new de.Cacher.BaseSync();
+var async_cache = new de.Cacher.BaseAsync();
+var sync_cache = new de.Cacher.BaseSync();
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -36,8 +37,8 @@ describe( 'options.cache', function() {
             }
         );
 
-        var context = new de.Context( {
-            cacher: async_cacher
+        var context = new de.Context.Base( {
+            cache: async_cache
         } );
         context.run( block )
             .then( function( result ) {
@@ -46,8 +47,8 @@ describe( 'options.cache', function() {
             } );
 
         setTimeout( function() {
-            var context = new de.Context( {
-                cacher: async_cacher
+            var context = new de.Context.Base( {
+                cache: async_cache
             } );
             context.run( block )
                 .then( function( result ) {
@@ -57,8 +58,8 @@ describe( 'options.cache', function() {
         }, 100 );
 
         setTimeout( function() {
-            var context = new de.Context( {
-                cacher: async_cacher
+            var context = new de.Context.Base( {
+                cache: async_cache
             } );
             context.run( block )
                 .then( function( result ) {
