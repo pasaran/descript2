@@ -14,12 +14,12 @@
     },
     "dependencies": {
         "cookies": "0.5.1",
-        "memcached": "2.2.1"
+        "memcached": "2.2.1",
+        "nommon": "git://github.com/pasaran/nommon.git"
     },
     "devDependencies": {
         "mocha": "*",
-        "expect.js": "*",
-        "nommon": "*"
+        "expect.js": "*"
     },
     "engines": {
         "node": "*"
