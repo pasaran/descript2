@@ -21,6 +21,12 @@
         "mocha": "*",
         "expect.js": "*"
     },
+    "files": [
+        "lib"
+    ],
+    "main": {
+        "lib/index.js"
+    },
     "engines": {
         "node": "*"
     }
