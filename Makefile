@@ -57,5 +57,8 @@ context:
 dir-config:
 	node_modules/.bin/mocha tests/dir-config.js
 
-.PHONY: tests $(TESTS)
+lint:
+	node_modules/.bin/eslint lib/*.js
+
+.PHONY: tests $(TESTS) lint
 

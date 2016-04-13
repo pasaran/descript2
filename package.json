@@ -19,7 +19,9 @@
     },
     "devDependencies": {
         "mocha": "*",
-        "expect.js": "*"
+        "expect.js": "*",
+        "eslint": "*",
+        "eslint-plugin-nop": "*"
     },
     "files": [
         "lib"
