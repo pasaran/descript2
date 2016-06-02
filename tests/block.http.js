@@ -184,7 +184,6 @@ fake.start( function() {
                     expect( result ).to.be.a( de.Error );
 
                     expect( result.error.id ).to.be( 'INVALID_JSON' );
-                    expect( result.error.message ).to.be( 'Unexpected token &' );
 
                     done();
                 } );
