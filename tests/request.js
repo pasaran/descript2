@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 var qs_ = require( 'querystring' );
 var url_ = require( 'url' );
 
@@ -22,7 +24,6 @@ var base_url = `http://127.0.0.1:${ port }`;
 var hello_string = 'Hello, World';
 
 var log = new de.Log( {
-    off: false,
     debug: true
 } );
 
@@ -92,58 +93,6 @@ fake.start( function() {
                     } );
             } );
 
-            it( 'protocol, hostname, port, path', function( done ) {
-                var path = `/get/${ n++ }`;
-
-                fake.add( path, {
-                    status_code: 200,
-                    content: hello_string,
-                } );
-
-                var context = create_context();
-                de.request(
-                    {
-                        protocol: 'http:',
-                        hostname: '127.0.0.1',
-                        port: port,
-                        path: path
-                    },
-                    context
-                )
-                    .then( function( result ) {
-                        expect( result.status_code ).to.be( 200 );
-                        expect( result.body.toString() ).to.be( hello_string );
-
-                        done();
-                    } );
-            } );
-
-            it( 'hostname takes priority over host', function( done ) {
-                var path = `/get/${ n++ }`;
-
-                fake.add( path, {
-                    status_code: 200,
-                    content: hello_string,
-                } );
-
-                var context = create_context();
-                de.request(
-                    {
-                        hostname: '127.0.0.1',
-                        host: '127.0.0.2',
-                        port: port,
-                        path: path
-                    },
-                    context
-                )
-                    .then( function( result ) {
-                        expect( result.status_code ).to.be( 200 );
-                        expect( result.body.toString() ).to.be( hello_string );
-
-                        done();
-                    } );
-            } );
-
             it( 'method is get', function( done ) {
                 var path = `/get/${ n++ }`;
 
@@ -191,7 +140,7 @@ fake.start( function() {
                     } );
             } );
 
-            it( 'url takes priority over hostname, port, path', function( done ) {
+            it( 'url takes priority over host, port, path', function( done ) {
                 var path = `/get/${ n++ }`;
 
                 fake.add( path, {
@@ -203,7 +152,7 @@ fake.start( function() {
                 de.request(
                     {
                         url: `${ base_url }${ path }`,
-                        hostname: '127.0.0.2',
+                        host: '127.0.0.2',
                         port: 9090,
                         path: '/-/foo/bar/'
                     },
@@ -244,6 +193,33 @@ fake.start( function() {
                     } );
             } );
 
+            it( 'url with query', function( done ) {
+                var path = `/get${ n++ }`;
+
+                fake.add( path, function( req, res, data ) {
+                    expect( url_.parse( req.url, true ).query ).to.be.eql( {
+                        foo: 42,
+                        bar: 24
+                    } );
+
+                    res.end();
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }?foo=42`,
+                        query: {
+                            bar: 24
+                        }
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
+            } );
+
         } );
 
         describe( 'post request', function() {
@@ -275,10 +251,10 @@ fake.start( function() {
             it( 'body is a buffer', function( done ) {
                 var path = `/post/${ n++ }`;
 
-                var content = Buffer( 'Привет!' );
+                var content = new Buffer( 'Привет!' );
 
                 fake.add( path, function( req, res, data ) {
-                    expect( Buffer.compare( content, data) ).to.be( 0 );
+                    expect( Buffer.compare( content, data ) ).to.be( 0 );
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/octet-stream' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( Buffer.byteLength( content ) ) );
 
@@ -445,8 +421,6 @@ fake.start( function() {
                         expect( result ).to.be.a( no.Error );
                         expect( result.error.status_code ).to.be( 503 );
                         expect( String( result.error.body ) ).to.be( JSON.stringify( error ) );
-                        //  expect( result.error.log ).to.have.length( 1 );
-                        //  expect( result.error.log[ 0 ].status_code ).to.be( 503 );
 
                         done();
                     } );
@@ -476,7 +450,6 @@ fake.start( function() {
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
-                        //  expect( result.log[ 0 ].status_code ).to.be( 503 );
 
                         done();
                     } );
@@ -499,7 +472,6 @@ fake.start( function() {
                     .then( function( result ) {
                         expect( result ).to.be.a( no.Error );
                         expect( result.error.status_code ).to.be( 404 );
-                        //  expect( result.error.log ).to.be( undefined );
 
                         done();
                     } );
@@ -526,7 +498,6 @@ fake.start( function() {
                     .then( function( result ) {
                         expect( result ).to.be.a( no.Error );
                         expect( result.error.status_code ).to.be( 404 );
-                        //  expect( result.error.log ).to.have.length( 1 );
 
                         done();
                     } );
@@ -605,22 +576,113 @@ fake.start( function() {
                 var context = create_context();
                 de.request(
                     {
-                        url: `${ base_url }${ path }/foo`
+                        url: `${ base_url }${ path }/foo`,
+                        max_redirects: 1
                     },
                     context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 200 );
                         expect( result.body.toString() ).to.be( hello_string );
-                        //  expect( result.log ).to.have.length( 1 );
-                        //  expect( result.log[ 0 ].status_code ).to.be( 302 );
-                        //  expect( result.log[ 0 ].headers.location ).to.be( `${ base_url }${ path }/bar` );
 
                         done();
                     } );
             } );
 
-            it( 'no redirect with max_redirects=0', function( done ) {
+            it( 'location without host', function( done ) {
+                var path = `/redirect/${ n++ }`;
+
+                fake.add( `${ path }/foo`, {
+                    status_code: 302,
+                    wait: 50,
+                    headers: {
+                        'location': `${ path }/bar`
+                    }
+                } );
+                fake.add( `${ path }/bar`, {
+                    status_code: 200,
+                    wait: 50,
+                    content: hello_string
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }/foo`,
+                        max_redirects: 1
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result.status_code ).to.be( 200 );
+                        expect( result.body.toString() ).to.be( hello_string );
+
+                        done();
+                    } );
+            } );
+
+            it( 'redirect to the same url', function( done ) {
+                var path = `/redirect/${ n++ }`;
+
+                fake.add( `${ path }/foo`, {
+                    status_code: 302,
+                    wait: 50,
+                    headers: {
+                        'location': `${ path }/foo`
+                    }
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }/foo`,
+                        max_redirects: 1
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.id ).to.be( 'HTTP_CYCLIC_REDIRECT' );
+
+                        done();
+                    } );
+            } );
+
+            it( 'cyclic redirect', function( done ) {
+                var path = `/cyclic-redirect/${ n++ }`;
+
+                fake.add( `${ path }/foo`, {
+                    status_code: 302,
+                    wait: 50,
+                    headers: {
+                        'location': `${ path }/bar`
+                    }
+                } );
+                fake.add( `${ path }/bar`, {
+                    status_code: 302,
+                    wait: 50,
+                    headers: {
+                        'location': `${ path }/foo`
+                    }
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }/foo`,
+                        max_redirects: 2
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+                        expect( result.error.id ).to.be( 'HTTP_CYCLIC_REDIRECT' );
+
+                        done();
+                    } );
+            } );
+
+            it( 'no redirect by default', function( done ) {
                 var path = `/redirect/${ n++ }`;
 
                 fake.add( `${ path }/foo`, {
@@ -638,15 +700,13 @@ fake.start( function() {
                 var context = create_context();
                 de.request(
                     {
-                        url: `${ base_url }${ path }/foo`,
-                        max_redirects: 0
+                        url: `${ base_url }${ path }/foo`
                     },
                     context
                 )
                     .then( function( result ) {
                         expect( result.status_code ).to.be( 302 );
                         expect( result.headers[ 'location' ] ).to.be( `${ base_url }${ path }/bar` );
-                        //  expect( result.log ).to.be( undefined );
 
                         done();
                     } );
