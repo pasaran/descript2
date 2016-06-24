@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -32,7 +32,46 @@ describe( 'options.params', function() {
         expect( params ).not.to.be( raw_params );
     } );
 
-    it( 'options.valid_params', function() {
+    it( 'raw params with null and undefined value', function() {
+        var block = create_block( null );
+
+        var raw_params = {
+            a: null,
+            b: undefined,
+            c: 42
+        };
+
+        var params = block._params( raw_params );
+
+        expect( params ).to.be.eql( {
+            c: 42
+        } );
+    } );
+
+    it( 'params with null and undefined value', function() {
+        var block = create_block( null, {
+            params: {
+                a: null,
+                b: undefined
+            }
+        } );
+
+        var raw_params = {
+            a: 42,
+            b: 24,
+            c: 66
+        };
+
+        var params = block._params( raw_params );
+
+        expect( params ).to.be.eql( {
+            a: 42,
+            b: 24,
+            c: 66
+        } );
+    } );
+
+    it( 'valid_params', function() {
         var block = create_block( null, {
             valid_params: {
                 a: null,
@@ -75,7 +114,7 @@ describe( 'options.params', function() {
         } );
     } );
 
-    it( 'options.valid_params with defaul values', function() {
+    it( 'valid_params with defaul values', function() {
         var block = create_block( null, {
             valid_params: {
                 a: null,
@@ -96,13 +135,69 @@ describe( 'options.params', function() {
         } );
     } );
 
-    it( 'options.params', function() {
+    it( 'params is an object', function() {
+        var block = create_block( null, {
+            params: {
+                a: de.jexpr( 'params.foo' ),
+                b: function( params, context, state ) {
+                    return params.bar;
+                }
+            }
+        } );
+
+        var raw_params = {
+            foo: 42,
+            bar: 24,
+            quu: 66
+        };
+
+        var params = block._params( raw_params );
+
+        expect( params ).to.be.eql( {
+            a: 42,
+            b: 24,
+            foo: 42,
+            bar: 24,
+            quu: 66
+        } );
+    } );
+
+    it( 'params is an object and valid_params', function() {
+        var block = create_block( null, {
+            valid_params: {
+                a: null,
+                b: null,
+                quu: null
+            },
+            params: {
+                a: de.jexpr( 'params.foo' ),
+                c: de.jexpr( 'params.bar' )
+            }
+        } );
+
+        var raw_params = {
+            foo: 42,
+            bar: 24,
+            quu: 66
+        };
+
+        var params = block._params( raw_params );
+
+        expect( params ).to.be.eql( {
+            a: 42,
+            quu: 66
+        } );
+    } );
+
+
+    it( 'params is a object of values and functions', function() {
         var block = create_block( null, {
             params: {
                 a: 42,
                 b: function( params ) {
                     return params.c;
-                }
+                },
+                c: null
             }
         } );
 
@@ -123,7 +218,7 @@ describe( 'options.params', function() {
         } );
     } );
 
-    it( 'options.params and options.valid_params', function() {
+    it( 'params and valid_params #1', function() {
         var block = create_block( null, {
             valid_params: {
                 d: null
@@ -132,99 +227,116 @@ describe( 'options.params', function() {
                 a: 42,
                 b: function( params ) {
                     return params.c;
-                }
+                },
+                c: de.jexpr( 'params.e' )
             }
         } );
 
         var raw_params = {
-            a: 66,
-            b: 24,
-            c: 'hello',
-            d: 0
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
+            e: 5
+        };
+
+        var params = block._params( raw_params );
+
+        expect( params ).to.be.eql( {
+            d: 4
+        } );
+    } );
+
+    it( 'params and valid_params #2', function() {
+        var block = create_block( null, {
+            valid_params: {
+                a: null,
+                b: null,
+                c: null
+            },
+            params: {
+                a: 42,
+                b: function( params ) {
+                    return params.c;
+                },
+                c: de.jexpr( 'params.e' )
+            }
+        } );
+
+        var raw_params = {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
+            e: 5
         };
 
         var params = block._params( raw_params );
 
         expect( params ).to.be.eql( {
             a: 42,
-            b: 'hello',
-            d: 0
+            b: 3,
+            c: 5
         } );
     } );
 
-    it( 'options.params is a function', function() {
+    it( 'params is a function', function() {
         var block = create_block( null, {
             params: function( params ) {
                 return {
                     a: 42,
-                    b: params.b
+                    b: params.c
                 };
             }
         } );
 
         var raw_params = {
-            a: 66,
-            b: 24,
-            c: 'hello',
-            d: 0
+            c: 24,
+            d: 66
         };
 
         var params = block._params( raw_params );
 
         expect( params ).to.be.eql( {
             a: 42,
-            b: 24
+            b: 24,
+            c: 24,
+            d: 66
         } );
     } );
 
     it( 'options.params is a function and options.valid_params', function() {
         var block = create_block( null, {
             valid_params: {
-                c: null
+                a: null,
+                d: null
             },
             params: function( params ) {
                 return {
                     a: 42,
-                    b: params.b
+                    b: 24,
+                    f: 66
                 };
             }
         } );
 
         var raw_params = {
-            a: 66,
-            b: 24,
-            c: 'hello',
-            d: 0
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
+            e: 5
         };
 
         var params = block._params( raw_params );
 
         expect( params ).to.be.eql( {
             a: 42,
-            b: 24
+            d: 4
         } );
     } );
 
-    it( 'options.params with null', function() {
-        var block = create_block( null, {
-            params: {
-                a: null
-            }
-        } );
-
-        var raw_params = {
-            a: 66,
-            b: 24
-        };
-
-        var params = block._params( raw_params );
-
-        expect( params ).to.be.eql( {
-            b: 24
-        } );
-    } );
-
-    it( 'options.params with jexpr', function() {
+    it( 'params with jexpr', function() {
         var block = create_block( null, {
             params: {
                 a: de.jexpr( 'params.foo' ),
@@ -234,13 +346,14 @@ describe( 'options.params', function() {
         } );
 
         var params = block._params(
-            { foo: 42 },
+            { foo: 42, boo: 79 },
             { bar: 24 },
             { quu: 66 }
         );
 
         expect( params ).to.be.eql( {
             foo: 42,
+            boo: 79,
             a: 42,
             b: 24,
             c: 66
@@ -258,11 +371,13 @@ describe( 'options.params', function() {
                     b: null,
                     c: null
                 },
-                params: {
+                params: de.jexpr( {
                     a: de.jexpr( 'params.foo' ),
                     b: de.jexpr( 'state.bar' ),
-                    c: de.jexpr( 'context.quu' )
-                },
+                    c: function( params, context, state ) {
+                        return context.quu;
+                    }
+                } ),
                 before: function( params, context, state ) {
                     state.bar = 24;
                     context.quu = 66;
@@ -281,6 +396,44 @@ describe( 'options.params', function() {
 
                 done();
             } );
+    } );
+
+    it( 'chain of params, valid_params, params', function() {
+        var b1 = de.value( null, {
+            params: {
+                a: de.jexpr( 'params.foo' ),
+                b: 42
+            }
+        } );
+
+        var b2 = b1( {
+            valid_params: {
+                c: null,
+                d: null
+            }
+        } );
+
+        var b3 = b2( {
+            params: {
+                c: de.jexpr( 'params.bar' ),
+                e: 24
+            }
+        } );
+
+        var params = b3._compile()._params( {
+            b: 77,
+            d: 82,
+            foo: 33,
+            bar: 66,
+            quu: 99
+        } );
+
+        expect( params ).to.be.eql( {
+            a: 33,
+            b: 42,
+            c: 66,
+            d: 82
+        } );
     } );
 
 } );
