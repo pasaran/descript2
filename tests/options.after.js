@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -12,12 +12,21 @@ var ERROR_ID = 'AFTER_ERROR';
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 describe( 'options.after', function() {
 
     it( 'single after', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( function( params, context, state ) {
                 expect( _state ).to.be( undefined );
                 _state = state;
@@ -49,7 +58,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after, block returns an error', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( function( params, context, state ) {
                 return de.error( ERROR_ID );
             }, 50 ),
@@ -71,7 +80,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after returning a value', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: function( params, context, state ) {
@@ -90,7 +99,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after returning an error', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: function( params, context ) {
@@ -112,7 +121,7 @@ describe( 'options.after', function() {
     it( 'single after returning a promise', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( function( params, context, state ) {
                 expect( _state ).to.be( undefined );
                 _state = state;
@@ -143,7 +152,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after returning a promise resolving with a value', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: helpers.wrap( 'bar', 50 )
@@ -160,7 +169,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after returning a promise resolving with an error', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: helpers.wrap( function( params, context, state ) {
@@ -182,7 +191,7 @@ describe( 'options.after', function() {
     it( 'multiple after', function( done ) {
         var _state;
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( function( params, context, state ) {
                 expect( _state ).to.be( undefined );
                 _state = state;
@@ -227,7 +236,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'multiple after, first one returning an error', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: [
@@ -253,7 +262,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'multiple after, second one returning an error', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: [
@@ -281,7 +290,7 @@ describe( 'options.after', function() {
     it( 'single after and single inherited after', function( done ) {
         var _state;
 
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( function( params, context, state ) {
                 expect( _state ).to.be( undefined );
                 _state = state;
@@ -305,13 +314,15 @@ describe( 'options.after', function() {
         );
 
         var b2 = b1( {
-            after: function( params, context, state ) {
-                expect( state ).to.be( _state );
-                expect( state ).to.be.eql( { foo: true, bar: true } );
+            options: {
+                after: function( params, context, state ) {
+                    expect( state ).to.be( _state );
+                    expect( state ).to.be.eql( { foo: true, bar: true } );
 
-                state.quu = true;
+                    state.quu = true;
 
-                return 'quu';
+                    return 'quu';
+                }
             }
         } );
 
@@ -326,7 +337,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after returning an error and single inherited after', function( done ) {
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: function( params, context ) {
@@ -336,8 +347,10 @@ describe( 'options.after', function() {
         );
 
         var b2 = b1( {
-            after: function( params, context ) {
-                return de.error( ERROR_ID );
+            options: {
+                after: function( params, context ) {
+                    return de.error( ERROR_ID );
+                }
             }
         } );
 
@@ -352,7 +365,7 @@ describe( 'options.after', function() {
     } );
 
     it( 'single after and single inherited after returning an error', function( done ) {
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 after: function( params, context ) {
@@ -362,8 +375,10 @@ describe( 'options.after', function() {
         );
 
         var b2 = b1( {
-            after: function( params, context ) {
-                throw Error( 'error' );
+            options: {
+                after: function( params, context ) {
+                    throw Error( 'error' );
+                }
             }
         } );
 
@@ -380,7 +395,7 @@ describe( 'options.after', function() {
     it( 'multiple after and multiple inherited after', function( done ) {
         var _state;
 
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( function( params, context, state ) {
                 expect( _state ).to.be( undefined );
                 _state = state;
@@ -411,21 +426,23 @@ describe( 'options.after', function() {
         );
 
         var b2 = b1( {
-            after: [
-                function( params, context, state ) {
-                    expect( state ).to.be( _state );
-                    expect( state ).to.be.eql( { c0: true, c1: true, c2: true } );
+            options: {
+                after: [
+                    function( params, context, state ) {
+                        expect( state ).to.be( _state );
+                        expect( state ).to.be.eql( { c0: true, c1: true, c2: true } );
 
-                    state.c3 = true;
-                },
+                        state.c3 = true;
+                    },
 
-                function( params, context, state ) {
-                    expect( state ).to.be( _state );
-                    expect( state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true } );
+                    function( params, context, state ) {
+                        expect( state ).to.be( _state );
+                        expect( state ).to.be.eql( { c0: true, c1: true, c2: true, c3: true } );
 
-                    state.c4 = true;
-                }
-            ]
+                        state.c4 = true;
+                    }
+                ]
+            }
         } );
 
         var context = helpers.context();

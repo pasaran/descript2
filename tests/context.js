@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -23,6 +23,13 @@ var log = new de.Log( {
     debug: false
 } );
 
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
+
 function create_context() {
     return new de.Context.Base( {
         log: log
@@ -46,7 +53,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             helpers.wrap( content, 50 )
                         );
 
@@ -81,7 +88,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             helpers.wrap( content, 50 )
                         );
 
@@ -118,7 +125,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             helpers.wrap( content, 50 )
                         );
 
@@ -161,7 +168,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -215,7 +222,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -271,7 +278,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -326,7 +333,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -383,7 +390,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -436,7 +443,7 @@ fake.start( function() {
 
         describe( 'context.abort()', function() {
 
-            it ( 'argument is a string', function( done ) {
+            it( 'argument is a string', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -445,7 +452,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -493,7 +500,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'argument is an object with id', function( done ) {
+            it( 'argument is an object with id', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -502,7 +509,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -551,7 +558,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'argument is an object without id', function( done ) {
+            it( 'argument is an object without id', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -560,7 +567,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -609,7 +616,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'custom status_code', function( done ) {
+            it( 'custom status_code', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -618,7 +625,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -668,7 +675,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'custom body is a string', function( done ) {
+            it( 'custom body is a string', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -678,7 +685,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -726,7 +733,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'custom body is a html-string', function( done ) {
+            it( 'custom body is a html-string', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -736,7 +743,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },
@@ -784,7 +791,7 @@ fake.start( function() {
                     } );
             } );
 
-            it ( 'custom content-type', function( done ) {
+            it( 'custom content-type', function( done ) {
                 done = helpers.wrap_done( done, 2 );
 
                 var path = `/context/${ n++ }`;
@@ -793,7 +800,7 @@ fake.start( function() {
 
                 fake.add( path, {
                     content: function( req, res ) {
-                        var block = de.block(
+                        var block = create_block(
                             function( params, context, state ) {
                                 throw Error( 'error' );
                             },

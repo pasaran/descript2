@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 var url_ = require( 'url' );
 var qs_ = require( 'querystring' );
 
@@ -25,7 +27,7 @@ var log = new de.Log( {
     debug: true
 } );
 
-function create_context( config ) {
+function create_context() {
     var context = new de.Context.Base( {
         log: log
     } );
@@ -34,7 +36,10 @@ function create_context( config ) {
 }
 
 function create_block( block, options ) {
-    return de.http( block, options );
+    return de.http( {
+        block: block,
+        options: options
+    } );
 }
 
 //  ---------------------------------------------------------------------------------------------------------------  //

@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -9,11 +9,20 @@ var helpers = require( './_helpers.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var memcache = new de.Cache( '127.0.0.1:11211' );
+//  var memcache = new de.Cache( '127.0.0.1:11211' );
 var test_async_cache = new de.Cache.TestAsync();
-var test_sync_cache = new de.Cache.TestSync();
+//  var test_sync_cache = new de.Cache.TestSync();
 
 var cache = test_async_cache;
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -28,7 +37,7 @@ describe( 'options.cache', function() {
             foo: true
         };
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( function() {
                 _calls++;
 

@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -8,10 +8,19 @@ var helpers = require( './_helpers.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 describe( 'options.timeout', function() {
 
     it( 'timeout', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 200 ),
             {
                 timeout: 100

@@ -10,13 +10,22 @@ var ERROR_ID = 'BLOCK_GUARDED';
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
 describe( 'options.guard', function() {
 
     it( 'guard is a function', function( done ) {
         var _params = { foo: true };
         var _context = helpers.context();
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 id: 'first',
@@ -48,7 +57,7 @@ describe( 'options.guard', function() {
         var _params = { foo: true };
         var _context = helpers.context();
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: function( params, context, state ) {
@@ -67,7 +76,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'successful guard', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: de.jexpr( 'params.foo' )
@@ -84,7 +93,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'failed guard', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: de.jexpr( 'params.foo' )
@@ -106,7 +115,7 @@ describe( 'options.guard', function() {
         var _context = helpers.context();
         var foo;
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 id: 'first',
@@ -148,7 +157,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'guard is an array #2', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: [
@@ -174,7 +183,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'guard is an array #3', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: [
@@ -200,7 +209,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'guard is an array #4', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 guard: [
@@ -220,7 +229,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'guard checks inherited state', function( done ) {
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( {
                 id: 42
             }, 50 ),
@@ -231,7 +240,7 @@ describe( 'options.guard', function() {
             }
         );
 
-        var b2 = de.block(
+        var b2 = create_block(
             helpers.wrap( 'foo' ),
             {
                 deps: b1,
@@ -250,7 +259,7 @@ describe( 'options.guard', function() {
 
     it( 'guard and inherited guard #1', function( done ) {
         var foo;
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( 'foo' ),
             {
                 guard: function( params, context, state ) {
@@ -281,7 +290,7 @@ describe( 'options.guard', function() {
     } );
 
     it( 'guard and inherited guard #2', function( done ) {
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( 'foo' ),
             {
                 guard: function( params, context, state ) {

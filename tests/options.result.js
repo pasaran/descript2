@@ -1,10 +1,19 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
 var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
+
+//  ---------------------------------------------------------------------------------------------------------------  //
+
+function create_block( block, options ) {
+    return de.func( {
+        block: block,
+        options: options
+    } );
+}
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
@@ -16,7 +25,7 @@ describe( 'options.result', function() {
         var _result_2 = { bar: true };
         var _context = helpers.context();
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( _result_1 ),
             {
                 id: 'first',
@@ -47,7 +56,7 @@ describe( 'options.result', function() {
         var _result_2 = { bar: true };
         var _result_3 = { quu: true };
 
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( _result_1 ),
             {
                 result: [
@@ -76,7 +85,7 @@ describe( 'options.result', function() {
     } );
 
     it( 'result is a jexpr', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( {
                 foo: {
                     bar: 42
@@ -122,7 +131,7 @@ describe( 'options.result', function() {
     } );
 
     it( 'result is an array of jexprs', function( done ) {
-        var block = de.block(
+        var block = create_block(
             helpers.wrap( {
                 foo: {
                     bar: {
@@ -150,7 +159,7 @@ describe( 'options.result', function() {
     } );
 
     it( 'result and inherited result', function( done ) {
-        var b1 = de.block(
+        var b1 = create_block(
             helpers.wrap( {
                 foo: {
                     bar: {
@@ -164,7 +173,9 @@ describe( 'options.result', function() {
         );
 
         var b2 = b1( {
-            result: de.jexpr( '.bar' )
+            options: {
+                result: de.jexpr( '.bar' )
+            }
         } );
 
         var context = helpers.context();

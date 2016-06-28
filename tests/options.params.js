@@ -9,7 +9,10 @@ var helpers = require( './_helpers.js' );
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 function create_block( block, options ) {
-    return de.value( block, options )._compile();
+    return de.value( {
+        block: block,
+        options: options
+    } )._compile();
 }
 
 //  ---------------------------------------------------------------------------------------------------------------  //
@@ -361,11 +364,11 @@ describe( 'options.params', function() {
     } );
 
     it( 'params from state and context', function( done ) {
-        var block = de.func(
-            helpers.wrap( function( params, context, state ) {
+        var block = de.func( {
+            block: helpers.wrap( function( params, context, state ) {
                 return params;
             }, 50 ),
-            {
+            options: {
                 valid_params: {
                     a: null,
                     b: null,
@@ -383,7 +386,7 @@ describe( 'options.params', function() {
                     context.quu = 66;
                 }
             }
-        );
+        } );
 
         var context = helpers.context();
         context.run( block, { foo: 42 } )
@@ -399,24 +402,31 @@ describe( 'options.params', function() {
     } );
 
     it( 'chain of params, valid_params, params', function() {
-        var b1 = de.value( null, {
-            params: {
-                a: de.jexpr( 'params.foo' ),
-                b: 42
+        var b1 = de.value( {
+            block: null,
+            options: {
+                params: {
+                    a: de.jexpr( 'params.foo' ),
+                    b: 42
+                }
             }
         } );
 
         var b2 = b1( {
-            valid_params: {
-                c: null,
-                d: null
+            options: {
+                valid_params: {
+                    c: null,
+                    d: null
+                }
             }
         } );
 
         var b3 = b2( {
-            params: {
-                c: de.jexpr( 'params.bar' ),
-                e: 24
+            options: {
+                params: {
+                    c: de.jexpr( 'params.bar' ),
+                    e: 24
+                }
             }
         } );
 
