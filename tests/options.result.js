@@ -24,14 +24,13 @@ describe( 'options.result', function() {
         var _result_1 = { foo: true };
         var _result_2 = { bar: true };
         var _context = helpers.context();
+        const _state = {};
 
         var block = create_block(
             helpers.wrap( _result_1 ),
             {
                 id: 'first',
                 result: function( params, context, state, result ) {
-                    var _state = context._states[ 'first' ];
-
                     expect( params ).not.to.be( _params );
                     expect( params ).to.be.eql( _params );
                     expect( context ).to.be( _context );
@@ -43,7 +42,7 @@ describe( 'options.result', function() {
             }
         );
 
-        _context.run( block, _params )
+        _context.run( block, _params, _state )
             .then( function( result ) {
                 expect( result ).to.be( _result_2 );
 

@@ -27,7 +27,7 @@ var log = new de.Log( {
     debug: true
 } );
 
-function create_context( config ) {
+function create_context() {
     var context = new de.Context.Base( {
         log: log
     } );

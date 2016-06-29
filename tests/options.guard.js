@@ -1,4 +1,4 @@
-var no = require( 'nommon' );
+/* eslint-env mocha */
 
 var expect = require( 'expect.js' );
 
@@ -24,18 +24,13 @@ describe( 'options.guard', function() {
     it( 'guard is a function', function( done ) {
         var _params = { foo: true };
         var _context = helpers.context();
+        const _state = {};
 
         var block = create_block(
             helpers.wrap( 'foo', 50 ),
             {
                 id: 'first',
                 guard: function( params, context, state ) {
-                    //  NOTE: Кажется, больше никак стейт не достать,
-                    //  чтобы проверить, что это таки он.
-                    //  options.before вызывается уже после guard'а.
-                    //
-                    var _state = context._states[ 'first' ];
-
                     expect( params ).to.be( _params );
                     expect( context ).to.be( _context );
                     expect( state ).to.be( _state );
@@ -45,7 +40,7 @@ describe( 'options.guard', function() {
             }
         );
 
-        _context.run( block, _params )
+        _context.run( block, _params, _state )
             .then( function( result ) {
                 expect( result ).to.be( 'foo' );
 
@@ -61,7 +56,7 @@ describe( 'options.guard', function() {
             helpers.wrap( 'foo', 50 ),
             {
                 guard: function( params, context, state ) {
-                    return false
+                    return false;
                 }
             }
         );
@@ -113,6 +108,7 @@ describe( 'options.guard', function() {
     it( 'guard is an array #1', function( done ) {
         var _params = { id: 42 };
         var _context = helpers.context();
+        const _state = {};
         var foo;
 
         var block = create_block(
@@ -121,8 +117,6 @@ describe( 'options.guard', function() {
                 id: 'first',
                 guard: [
                     function( params, context, state ) {
-                        var _state = context._states[ 'first' ];
-
                         expect( params ).to.be( _params );
                         expect( context ).to.be( _context );
                         expect( state ).to.be( _state );
@@ -134,8 +128,6 @@ describe( 'options.guard', function() {
                     },
 
                     function( params, context, state ) {
-                        var _state = context._states[ 'first' ];
-
                         expect( params ).to.be( _params );
                         expect( context ).to.be( _context );
                         expect( state ).to.be( _state );
@@ -148,7 +140,7 @@ describe( 'options.guard', function() {
             }
         );
 
-        _context.run( block, _params )
+        _context.run( block, _params, _state )
             .then( function( result ) {
                 expect( result ).to.be( 'foo' );
 
