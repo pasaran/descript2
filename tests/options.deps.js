@@ -406,5 +406,54 @@ describe( 'options.deps', function() {
             } );
     } );
 
+    it( 'pre_conditions', function( done ) {
+        var b1 = de.func( {
+            block: helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            options: {
+                id: 'foo',
+                select: {
+                    foo: de.jexpr( '.foo' )
+                }
+            }
+        } );
+        var b2 = de.func( {
+            block: helpers.wrap( {
+                bar: 24
+            }, 20 ),
+            options: {
+                id: 'bar',
+                select: {
+                    bar: de.jexpr( '.bar' )
+                }
+            }
+        } );
+        var b3 = de.func( {
+            block: helpers.wrap( function( params, context, state ) {
+                return state;
+            }, 10 ),
+            options: {
+                id: 'quu',
+                deps: [
+                    de.jexpr( 'state.foo && state.bar' )
+                ]
+            }
+        } );
+
+        var context = helpers.context();
+        context.run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                expect( result[ 2 ] ).to.be.eql( {
+                    foo: 42,
+                    bar: 24
+                } );
+
+                done();
+            } );
+
+
+    } );
+
 } );
 
