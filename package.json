@@ -6,7 +6,7 @@
     },
     "name": "descript2",
     "description": "descript2",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "homepage": "https://github.com/pasaran/descript2",
     "repository": {
         "type": "git",
@@ -15,7 +15,7 @@
     "dependencies": {
         "cookies": "0.5.1",
         "memcached": "2.2.1",
-        "nommon": "git://github.com/pasaran/nommon.git"
+        "nommon": "0.0.43"
     },
     "devDependencies": {
         "mocha": "*",
