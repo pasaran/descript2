@@ -401,7 +401,7 @@ describe( 'options.params', function() {
             } );
     } );
 
-    it( 'chain of params, valid_params, params', function() {
+    it.skip( 'chain of params, valid_params, params', function() {
         var b1 = de.value( {
             block: null,
             options: {
