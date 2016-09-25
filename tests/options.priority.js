@@ -12,65 +12,39 @@ function create_context() {
     return new de.Context.Base();
 }
 
-/*
 function create_block( block, options ) {
     return de.func( {
-        block: helpers.wrap( block ),
+        block: block,
         options: options
     } );
 }
-*/
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 describe( 'options.priority', function() {
 
     it( 'priority in object', function( done ) {
-        const b1 = de.func( {
-            block: helpers.wrap(
-                function() {
-                    return {
-                        foo: 42
-                    };
-                },
-                100
-            ),
-            options: {
-                id: 'foo',
+        const b1 = create_block(
+            helpers.wrap( { foo: 42 }, 100 ),
+            {
                 priority: 100,
                 select: {
                     foo: de.jexpr( '.foo' )
                 }
             }
-        } );
-        const b2 = de.func( {
-            block: helpers.wrap(
-                function() {
-                    return {
-                        bar: 24
-                    };
-                },
-                20
-            ),
-            options: {
-                id: 'bar',
+        );
+        const b2 = create_block(
+            helpers.wrap( { bar: 24 }, 20 ),
+            {
                 priority: 50,
                 select: {
                     bar: de.jexpr( '.bar' )
                 }
             }
-        } );
-        const b3 = de.func( {
-            block: helpers.wrap(
-                function( params, context, state ) {
-                    return state.foo + state.bar;
-                },
-                30
-            ),
-            options: {
-                id: 'quu'
-            }
-        } );
+        );
+        const b3 = create_block(
+            helpers.wrap( de.jexpr( 'state.foo + state.bar' ), 30 )
+        );
 
         const context = create_context();
         context.run( {
@@ -80,6 +54,39 @@ describe( 'options.priority', function() {
         } )
             .then( function( result ) {
                 expect( result.quu ).to.be.eql( 66 );
+
+                done();
+            } );
+
+    } );
+
+    it( 'priority in array', function( done ) {
+        const b1 = create_block(
+            helpers.wrap( { foo: 42 }, 100 ),
+            {
+                priority: 100,
+                select: {
+                    foo: de.jexpr( '.foo' )
+                }
+            }
+        );
+        const b2 = create_block(
+            helpers.wrap( { bar: 24 }, 20 ),
+            {
+                priority: 50,
+                select: {
+                    bar: de.jexpr( '.bar' )
+                }
+            }
+        );
+        const b3 = create_block(
+            helpers.wrap( de.jexpr( 'state.foo + state.bar' ), 30 )
+        );
+
+        const context = create_context();
+        context.run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                expect( result[ 2 ] ).to.be.eql( 66 );
 
                 done();
             } );
