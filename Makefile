@@ -11,6 +11,7 @@ TESTS = options.params \
 	block.http \
 	block.file \
 	block.object \
+	block.func \
 	request \
 	context \
 	dir-config
@@ -55,6 +56,9 @@ block.file:
 
 block.object:
 	node_modules/.bin/mocha --delay tests/block.object.js
+
+block.func:
+	node_modules/.bin/mocha --delay tests/block.func.js
 
 request:
 	node_modules/.bin/mocha --delay tests/request.js
