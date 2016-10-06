@@ -455,6 +455,41 @@ fake.start( function() {
                     } );
             } );
 
+            it( 'post request, error, retry, success', function( done ) {
+                var path = `/error/${ n++ }`;
+
+                fake.add( path, [
+                    {
+                        status_code: 503
+                    },
+                    {
+                        status_code: 200,
+                        content: function( req, res, data ) {
+                            expect( data.toString() ).to.be( hello_string );
+
+                            res.end();
+                        }
+                    }
+                ] );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        body: hello_string,
+                        max_retries: 1
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result.status_code ).to.be( 200 );
+
+                        done();
+                    } );
+
+            } );
+
             it( 'no retry on 404 by default', function( done ) {
                 var path = `/error/${ n++ }`;
 
