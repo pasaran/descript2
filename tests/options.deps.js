@@ -412,7 +412,7 @@ describe( 'options.deps', function() {
                 foo: 42
             }, 10 ),
             options: {
-                id: 'foo',
+                //  id: 'foo',
                 select: {
                     foo: de.jexpr( '.foo' )
                 }
@@ -423,7 +423,7 @@ describe( 'options.deps', function() {
                 bar: 24
             }, 20 ),
             options: {
-                id: 'bar',
+                //  id: 'bar',
                 select: {
                     bar: de.jexpr( '.bar' )
                 }
@@ -434,7 +434,7 @@ describe( 'options.deps', function() {
                 return state;
             }, 10 ),
             options: {
-                id: 'quu',
+                //  id: 'quu',
                 deps: [
                     de.jexpr( 'state.foo && state.bar' )
                 ]
@@ -451,9 +451,39 @@ describe( 'options.deps', function() {
 
                 done();
             } );
-
-
     } );
 
+    it( 'failed pre_conditions', function( done ) {
+        var b1 = de.func( {
+            block: helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            options: {
+                select: {
+                    foo: de.jexpr( '.foo' )
+                }
+            }
+        } );
+        var b2 = de.func( {
+            block: helpers.wrap( function( params, context, state ) {
+                return state;
+            }, 10 ),
+            options: {
+                deps: [
+                    de.jexpr( 'state.bar' )
+                ]
+            }
+        } );
+
+        var context = helpers.context();
+        context.run( [ b1, b2 ] )
+            .then( function( result ) {
+                expect( result[ 0 ] ).to.be.eql( { foo: 42 } );
+                expect( result[ 1 ] ).to.be.a( de.Error );
+                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+
+                done();
+            } );
+    } );
 } );
 
