@@ -453,7 +453,7 @@ describe( 'options.deps', function() {
             } );
     } );
 
-    it( 'failed pre_conditions', function( done ) {
+    it( 'failed pre_conditions #1', function( done ) {
         var b1 = de.func( {
             block: helpers.wrap( {
                 foo: 42
@@ -485,5 +485,51 @@ describe( 'options.deps', function() {
                 done();
             } );
     } );
+
+    it( 'failed pre_conditions #2', function( done ) {
+        var b1 = de.func( {
+            block: helpers.wrap( {
+                quu: 42
+            }, 10 ),
+            options: {
+                select: {
+                    quu: de.jexpr( '.quu' )
+                }
+            }
+        } );
+        var b2 = de.func( {
+            block: helpers.wrap( function( params, context, state ) {
+                return state;
+            }, 10 ),
+            options: {
+                deps: [
+                    de.jexpr( 'state.foo' )
+                ]
+            }
+        } );
+        var b3 = de.func( {
+            block: helpers.wrap( function( params, context, state ) {
+                return state;
+            }, 10 ),
+            options: {
+                deps: [
+                    de.jexpr( 'state.bar' )
+                ]
+            }
+        } );
+
+        var context = helpers.context();
+        context.run( [ b1, b2, b3 ] )
+            .then( function( result ) {
+                expect( result[ 0 ] ).to.be.eql( { quu: 42 } );
+                expect( result[ 1 ] ).to.be.a( de.Error );
+                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 2 ] ).to.be.a( de.Error );
+                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+
+                done();
+            } );
+    } );
+
 } );
 
