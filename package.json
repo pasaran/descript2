@@ -14,8 +14,10 @@
     },
     "dependencies": {
         "cookies": "0.5.1",
-        "memcached": "2.2.1",
-        "nommon": "0.0.43"
+        "memcached": "2.2.1"
+    },
+    "peerDependencies": {
+        "nommon": "^0.0.45"
     },
     "devDependencies": {
         "mocha": "*",
