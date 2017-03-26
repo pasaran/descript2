@@ -51,7 +51,8 @@ describe( 'options.select', function() {
                         expect( state ).to.be.eql( { foo: 42 } );
 
                         return 24;
-                    }
+                    },
+                    baz: de.jexpr( 'params.state.bar' )
                 }
             }
         } );
@@ -60,7 +61,8 @@ describe( 'options.select', function() {
             .then( function() {
                 expect( _state ).to.be.eql( {
                     foo: 42,
-                    bar: 24
+                    bar: 24,
+                    baz: 24
                 } );
 
                 done();
