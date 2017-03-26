@@ -31,7 +31,9 @@ describe( 'options.select', function() {
         };
         var _context = create_context();
         var _state = {};
-        var _result = {};
+        var _result = {
+            maz: 89
+        };
 
         var block = de.value( {
             block: _result,
@@ -52,7 +54,7 @@ describe( 'options.select', function() {
 
                         return 24;
                     },
-                    baz: de.jexpr( 'params.state.bar' )
+                    baz: de.jexpr( '.maz' )
                 }
             }
         } );
@@ -62,7 +64,7 @@ describe( 'options.select', function() {
                 expect( _state ).to.be.eql( {
                     foo: 42,
                     bar: 24,
-                    baz: 24
+                    baz: 89
                 } );
 
                 done();
