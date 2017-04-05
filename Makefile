@@ -8,6 +8,7 @@ TESTS = options.params \
 	options.cache \
 	options.timeout \
 	options.priority \
+	options.required \
 	block.http \
 	block.file \
 	block.object \
@@ -47,6 +48,9 @@ options.timeout:
 
 options.priority:
 	node_modules/.bin/mocha tests/options.priority.js
+
+options.required:
+	node_modules/.bin/mocha tests/options.required.js
 
 block.http:
 	node_modules/.bin/mocha --delay tests/block.http.js
