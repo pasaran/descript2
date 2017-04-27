@@ -3,6 +3,7 @@ TESTS = options.params \
 	options.deps \
 	options.before \
 	options.after \
+	options.error \
 	options.guard \
 	options.result \
 	options.cache \
@@ -33,6 +34,9 @@ options.before:
 
 options.after:
 	node_modules/.bin/mocha tests/options.after.js
+
+options.error:
+	node_modules/.bin/mocha tests/options.error.js
 
 options.guard:
 	node_modules/.bin/mocha tests/options.guard.js
