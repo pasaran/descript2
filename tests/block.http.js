@@ -144,6 +144,33 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'options.with_meta', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( path, {
+                status_code: 200,
+                content: content,
+            } );
+
+            var block = create_block( {
+                url: `${ base_url }${ path }`,
+                with_meta: true
+            } );
+
+            var context = create_context();
+            context.run( block )
+                .then( function( result ) {
+                    console.log( result );
+                    expect( result.status_code ).to.be( 200 );
+                    expect( result.headers[ 'content-type' ] ).to.be( 'text/plain' );
+                    expect( result.result ).to.be( content );
+
+                    done();
+                } );
+        } );
+
         it( 'options.is_json', function( done ) {
             var path = `/block/http/${ n++ }`;
 
