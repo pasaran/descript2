@@ -38,7 +38,7 @@
         options: {
             isolate_state: true,
             select: {
-                count: '.bar.count'
+                count: de.jexpr('.bar.count')
             }
         }
 
@@ -272,8 +272,16 @@
 Возможность достать что-то из результата (параметров, стейта, контекста, ...)
 и положить в стейт, чтобы, например, этим могли воспользоваться другие блоки:
 
+Берем mark.id из result:
+
     select: {
-        mark_id: de.jexpr( '.result.mark.id' )
+        mark_id: de.jexpr( '.mark.id' )
+    }
+
+или берем mark_id из params:
+
+    select: {
+        mark_id: de.jexpr( 'params.mark_id' )
     }
 
 **Важно**. Если в стейте с этим ключом уже было значение и это был массив,
@@ -298,7 +306,7 @@
                 options: {
                     select: {
                         //  Здесь добавляется одиночный id.
-                        ids: de.jexpr( '.result.id' )
+                        ids: de.jexpr( '.id' )
                     }
                 }
             },
