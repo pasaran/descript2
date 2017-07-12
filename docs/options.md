@@ -68,10 +68,10 @@ de.object( {
 а результатом выполнения блока будет ошибка типа `BLOCK_GUARDED`:
 
 ```js
-    {
-        id: 'BLOCK_GUARDED',
-        message: 'Block guarded'
-    }
+{
+    id: 'BLOCK_GUARDED',
+    message: 'Block guarded'
+}
 ```
 
 Пример:
