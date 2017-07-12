@@ -41,17 +41,19 @@ const block = de.block(
 
 Блок запускается в [контексте](./context.md):
 
-    const context = new de.Context( req, res, config );
+```js
+const context = new de.Context( req, res, config );
 
-    context.run( block, params )
-        .then( function( result ) {
-            if ( de.is_error( result ) ) {
-                //  Error.
+context.run( block, params )
+    .then( function( result ) {
+        if ( de.is_error( result ) ) {
+            //  Error.
 
-            } else {
-                console.log( result );
-            }
-        } );
+        } else {
+            console.log( result );
+        }
+    } );
+```
 
 
 ## Типы блоков
