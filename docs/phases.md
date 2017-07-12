@@ -3,14 +3,18 @@
 У самого блока нет публичного метода `run` — есть приватный `_run`.
 Выполнение блока инициируется вызовом метода `run` у контекста:
 
-    const promise = context.run( block, params );
+```js
+const promise = context.run( block, params );
+```
 
 Или же, если блок является под-блоком другого блока, метод `_run` блока
 вызывается родительским блоком.
 
 В любом случае, каким-то образом случается вызов
 
-    block._run( params, context, state )
+```js
+block._run( params, context, state )
+```
 
 Дальше происходит довольно длинная цепочка разных действий.
 Каждое из них опционально и выполняется только при наличии
@@ -20,11 +24,15 @@
 Все функции, которые можно задать в `options.*` (`option.guard`,
 `options.before`, ...), как правило имеют сигнатуру:
 
-    function( params, context, state ) { ... }
+```js
+function( params, context, state ) { ... }
+```
 
 Или иногда, когда уже доступен результат блока:
 
-    function( params, context, state, result ) { ... }
+```js
+function( params, context, state, result ) { ... }
+```
 
 **Важно**. `params` здесь бывают разные. До определенного момента
 используются те `params`, которые были переданы в `block._run( params, ... )`.

@@ -23,14 +23,16 @@
 
 В общем виде определение блока выглядит как-то так:
 
-    const block = de.block(
-        {
-            //  block specific options
-        },
-        {
-            //  general options
-        }
-    );
+```js
+const block = de.block(
+    {
+        //  block specific options
+    },
+    {
+        //  general options
+    }
+);
+```
 
 где в `de.block` вместо `block` будет `http`, `file`, ...
 
@@ -67,81 +69,93 @@
 Куда именно делается запрос задается либо параметром `url`,
 либо комбинацией параметров `method`, `protocol`, `host`, `port`, `path`:
 
-    const block = de.http( {
-        url: 'https://api.some.host.com:33333/v1/get/foo/'
-    } );
+```js
+const block = de.http( {
+    url: 'https://api.some.host.com:33333/v1/get/foo/'
+} );
 
-    const block = de.http( {
-        method: 'GET',
-        protocol: 'https:',
-        host: 'api.some.host.com',
-        port: 33333,
-        path: '/v1/get/foo/'
-    } );
+const block = de.http( {
+    method: 'GET',
+    protocol: 'https:',
+    host: 'api.some.host.com',
+    port: 33333,
+    path: '/v1/get/foo/'
+} );
+```
 
 GET-параметры можно задать явно в `url` или `path`, например:
 
-    const block = de.http( {
-        url: 'https://api.some.host.com:33333/v1/get/foo/?id=42'
-    } );
+```js
+const block = de.http( {
+    url: 'https://api.some.host.com:33333/v1/get/foo/?id=42'
+} );
 
-    const block = de.http( {
-        ...
-        path: '/v1/get/foo/?id=42'
-    } );
+const block = de.http( {
+    ...
+    path: '/v1/get/foo/?id=42'
+} );
+```
 
 но проще задать их в `params` при запуске блока:
 
-    const block = de.http( {
-        url: 'https://api.some.host.com:33333/v1/get/foo/'
-    } );
-    context.run( block, { id: 42 } )
+```js
+const block = de.http( {
+    url: 'https://api.some.host.com:33333/v1/get/foo/'
+} );
+context.run( block, { id: 42 } )
+```
 
 По-дефолту для GET-запросов все `params` уходят в url, а для POST-запросов (а так же PATCH, PUT) —
 в тело запроса. Это поведение можно изменить через параметры `query` и `body`:
 
-    const block = de.http( {
-        method: 'POST',
-        protocol: 'https:',
-        host: 'api.some.host.com',
-        port: 33333,
-        path: '/v1/get/foo/',
-        query: {
-            id: de.jexpr( 'params.id' )
-        },
-        body: de.jexpr( 'params.content' )
-    } );
+```js
+const block = de.http( {
+    method: 'POST',
+    protocol: 'https:',
+    host: 'api.some.host.com',
+    port: 33333,
+    path: '/v1/get/foo/',
+    query: {
+        id: de.jexpr( 'params.id' )
+    },
+    body: de.jexpr( 'params.content' )
+} );
 
-    context.run( block, {
-        id: 42,
-        content: 'Hello'
-    } )
+context.run( block, {
+    id: 42,
+    content: 'Hello'
+} )
+```
 
 В этом случае будет POST-запрос на урл `/v1/get/foo/?id=42` с телом запроса `'Hello'`.
 
 Еще можно задавать заголовки запроса:
 
-    const block = de.http( {
-        url: 'https://api.some.host.com:33333/v1/get/foo/',
-        headers: {
-            'x-auth-token': 'qwerty123456'
-        }
-    } );
+```js
+const block = de.http( {
+    url: 'https://api.some.host.com:33333/v1/get/foo/',
+    headers: {
+        'x-auth-token': 'qwerty123456'
+    }
+} );
+```
 
 (TODO: параметры про SSL и Agent).
 
 
 ### `de.object`, `de.array`
 
-    const block_foo = de.http( ... );
-    const block_bar = de.http( ... );
+```js
+const block_foo = de.http( ... );
+const block_bar = de.http( ... );
 
-    const block_object = {
-        foo: block_foo,
-        bar: block_bar
-    };
+const block_object = {
+    foo: block_foo,
+    bar: block_bar
+};
 
-    const block_array = [ foo, bar ];
+const block_array = [ foo, bar ];
+```
 
 Результатом исполнения блока `block_object` будет объект с двумя ключами `foo` и `bar`
 и значениями, являющимися результатами выполнения блоков `block_foo` и `block_bar`.
@@ -151,48 +165,51 @@ GET-параметры можно задать явно в `url` или `path`, 
 Если у блока нет `options`, то можно не использовать `de.object`, `de.array`, а просто использовать
 массивы и объекты, как выше. Если `options` нужны:
 
-    const block = de.object( {
-        block: {
-            foo: block_foo,
-            bar: block_bar
-        },
-        options: {
-            ...
-        }
-    } );
+```js
+const block = de.object( {
+    block: {
+        foo: block_foo,
+        bar: block_bar
+    },
+    options: {
+        ...
+    }
+} );
+```
 
 
 ### `de.func`
 
-    const block_foo = de.http( {
-        block: ...,
+```js
+const block_foo = de.http( {
+    block: ...,
+    options: {
+        select: {
+            ids: de.jexpr( '.result.items.id' )
+        }
+    }
+} )
+
+const block = {
+
+    foo: block_foo,
+
+    bar: de.func( {
+        block: function( params, context, state ) {
+            return state.ids.map( id => de.http( {
+                block: {
+                    url: '...',
+                    query: {
+                        id: id
+                    }
+                }
+            } )
+        },
+
         options: {
-            select: {
-                ids: de.jexpr( '.result.items.id' )
-            }
+            deps: block_foo
         }
     } )
 
-    const block = {
-
-        foo: block_foo,
-
-        bar: de.func( {
-            block: function( params, context, state ) {
-                return state.ids.map( id => de.http( {
-                    block: {
-                        url: '...',
-                        query: {
-                            id: id
-                        }
-                    }
-                } )
-            },
-
-            options: {
-                deps: block_foo
-            }
-        } )
-
-    };
-
+};
+```

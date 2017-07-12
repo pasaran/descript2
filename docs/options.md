@@ -7,42 +7,44 @@
 
 Позволяет скрыть богатую внутреннюю жизнь блока в стейте:
 
-    //  b1
-    de.object( {
+```js
+//  b1
+de.object( {
 
-        block: {
-            //  b2
-            foo: de.block( {
-                id: 'foo',
-                block: ...,
-                options: {
-                    select: {
-                        id: de.jexpr( '.id' )
-                    }
+    block: {
+        //  b2
+        foo: de.block( {
+            id: 'foo',
+            block: ...,
+            options: {
+                select: {
+                    id: de.jexpr( '.id' )
                 }
-            } ),
-
-            //  b3
-            bar: de.block( {
-                block: ...,
-                options: {
-                    deps: 'foo',
-                    params: {
-                        id: de.jexpr( 'state.id' )
-                    }
-                }
-            } )
-
-        },
-
-        options: {
-            isolate_state: true,
-            select: {
-                count: '.bar.count'
             }
-        }
+        } ),
 
-    } )
+        //  b3
+        bar: de.block( {
+            block: ...,
+            options: {
+                deps: 'foo',
+                params: {
+                    id: de.jexpr( 'state.id' )
+                }
+            }
+        } )
+
+    },
+
+    options: {
+        isolate_state: true,
+        select: {
+            count: '.bar.count'
+        }
+    }
+
+} )
+```
 
 Здесь у блока `b1` есть два подблока: `b2` и `b3`, который зависит от `b2`.
 `b2` после получения результата кладет в стейт некий `id`, а `b3` использует его
@@ -65,18 +67,22 @@
 Если гард задан и его вычисленное значение оказывается ложным, то блок не выполняется,
 а результатом выполнения блока будет ошибка типа `BLOCK_GUARDED`:
 
+```js
     {
         id: 'BLOCK_GUARDED',
         message: 'Block guarded'
     }
+```
 
 Пример:
 
-    guard: function( params, context, state ) {
-        return context.req.method === 'POST' && state.id;
-    }
+```js
+guard: function( params, context, state ) {
+    return context.req.method === 'POST' && state.id;
+}
 
-    guard: de.jexpr( 'context.req.method === "POST" && state.id' )
+guard: de.jexpr( 'context.req.method === "POST" && state.id' )
+```
 
 Гард должен быть синхронным. См. `options.before`.
 
@@ -86,20 +92,22 @@
 Пре-валидация. Перед тем, как выполнять блок, можно проверить,
 все ли необходимые для этого условия выполнены:
 
-    before: function( params, context, state ) {
-        if ( !params.id ) {
-            return de.error( {
-                id: 'INCORRECT_PARAMS',
-                message: 'id param is missing'
-            } );
-        }
+```js
+before: function( params, context, state ) {
+    if ( !params.id ) {
+        return de.error( {
+            id: 'INCORRECT_PARAMS',
+            message: 'id param is missing'
+        } );
     }
+}
 
-    before: function( params ) {
-        if ( !params.id ) {
-            context.redirect( ... );
-        }
+before: function( params ) {
+    if ( !params.id ) {
+        context.redirect( ... );
     }
+}
+```
 
 Разница между `options.guard` и `options.before` в том, что если сработал гард,
 то это не считается ошибкой. И, например, если блок имел `options.required`, но был
@@ -107,27 +115,31 @@
 
 Второе отличие: `guard` всегда синхронный, а `before` может вернуть промис:
 
-    before: function() {
-        const promise = de.promise();
+```js
+before: function() {
+    const promise = de.promise();
 
-        ...
-            promise.resolve( de.error( ... ) );
+    ...
+        promise.resolve( de.error( ... ) );
 
-        return promise;
-    }
+    return promise;
+}
+```
 
 
 ## `options.key`, `options.maxage`, `options.cache`
 
 Позволяет закэшировать блок:
 
-    key: function( params, context, state ) {
-        return params.id;
-    },
-    maxage: 86400
+```js
+key: function( params, context, state ) {
+    return params.id;
+},
+maxage: 86400
 
-    key: de.jstring( '{ params.mark_id }:{ params.model_id }' ),
-    maxage: 3600
+key: de.jstring( '{ params.mark_id }:{ params.model_id }' ),
+maxage: 3600
+```
 
 По дефолту для кэширования используется объект `context.cache`
 (если он существует), который должен иметь методы `get` и `set`:
@@ -142,16 +154,20 @@
 Можно разные блоки кэшировать по-разному (например, один в памяти, другой в memcached),
 задавая явно объект с кэшом:
 
-    key: ...,
-    maxage: ...,
-    cache: my_cache
+```js
+key: ...,
+maxage: ...,
+cache: my_cache
+```
 
 
 ## `options.timeout`
 
 Таймаут блока в миллисекундах:
 
-    timeout: 1000
+```js
+timeout: 1000
+```
 
 Если блок не укладывается в указанный таймаут, то он завершается с ошибкой типа `BLOCK_TIMED_OUT`.
 При этом по возможности прекращается все, что блок делал до этого. Если это был http-блок, то запрос обрывается,
@@ -170,37 +186,43 @@
 В `params` мы описываем, как именно получать необходимые параметры.
 Это может быть просто функция, которая возвращает набор параметров:
 
-    params: function( params, context, state ) {
-        return {
-            page_size: 10,
-            page_number: params.page,
-            mark_id: state.mark_id,
-            sale_id: params.id
-        };
-    }
+```js
+params: function( params, context, state ) {
+    return {
+        page_size: 10,
+        page_number: params.page,
+        mark_id: state.mark_id,
+        sale_id: params.id
+    };
+}
+```
 
 Или же это объект:
 
-    params: {
-        page_size: 10,
-        page_number: function( params, context, state ) {
-            return params.page;
-        },
-        mark_id: de.jexpr( 'state.mark_id' ),
-        sale_id: de.jexpr( 'params.id' )
-    }
+```js
+params: {
+    page_size: 10,
+    page_number: function( params, context, state ) {
+        return params.page;
+    },
+    mark_id: de.jexpr( 'state.mark_id' ),
+    sale_id: de.jexpr( 'params.id' )
+}
+```
 
 В этом объекте значениями могут быть либо функции (их значение вычисляется),
 либо просто константные значения.
 
 В `valid_params` мы можем описать, какие вообще параметры допустимы:
 
-    valid_params: {
-        mark_id: null,
-        sale_id: null,
-        page_number: 0,
-        page_size: 20
-    }
+```js
+valid_params: {
+    mark_id: null,
+    sale_id: null,
+    page_number: 0,
+    page_size: 20
+}
+```
 
 Здесь не `null` означает дефолтное значение параметра.
 
@@ -217,47 +239,55 @@
 
 Пример:
 
-    b1 = de.block( {
-        block: ...,
-        options: {
-            valid_params: {
-                foo: 42,
-                bar: null
-            }
+```js
+b1 = de.block( {
+    block: ...,
+    options: {
+        valid_params: {
+            foo: 42,
+            bar: null
         }
-    } )
+    }
+} )
 
-    b2 = b1( {
-        options: {
-            params: {
-                bar: de.jexpr( 'params.quu' )
-            }
+b2 = b1( {
+    options: {
+        params: {
+            bar: de.jexpr( 'params.quu' )
         }
-    } )
+    }
+} )
 
-    context.run( b2, { quu: 24, boo: null } )
+context.run( b2, { quu: 24, boo: null } )
+```
 
 На нулевом шаге отбрасываем все значения с `null` и `undefined`:
 
-    {
-        quu: 24
-    }
+```js
+{
+    quu: 24
+}
+```
 
 После первого шага у нас получится объект:
 
-    {
-        quu: 24,
-        bar: 24
-    }
+```js
+{
+    quu: 24,
+    bar: 24
+}
+```
 
 На втором шаге, мы добавим `foo: 42` (дефолтное значение),
 но отфильтруем `quu: 42`, так как оно не входит в набор разрешенных параметров.
 Получаем:
 
-    {
-        foo: 42,
-        bar: 24
-    }
+```js
+{
+    foo: 42,
+    bar: 24
+}
+```
 
 
 ## action
@@ -272,58 +302,62 @@
 Возможность достать что-то из результата (параметров, стейта, контекста, ...)
 и положить в стейт, чтобы, например, этим могли воспользоваться другие блоки:
 
-    select: {
-        mark_id: de.jexpr( '.result.mark.id' )
-    }
+```js
+select: {
+    mark_id: de.jexpr( '.result.mark.id' )
+}
+```
 
 **Важно**. Если в стейте с этим ключом уже было значение и это был массив,
 то вычисленный результат не перезатирает старый, а добавляется к этому массиву.
 Например, у нас есть несколько блоков, мы ходим достать из их результатов какие-то
 наборы id-шников, а потом, в самом конце, сделать один batch-запрос с ними:
 
-    de.object( {
+```js
+de.object( {
 
-        block: {
-            foo: de.block( {
-                ...
-                options: {
-                    select: {
-                        //  Здесь у нас выберется массив (скорее всего).
-                        ids: de.jexpr( '.items.id' )
-                    }
+    block: {
+        foo: de.block( {
+            ...
+            options: {
+                select: {
+                    //  Здесь у нас выберется массив (скорее всего).
+                    ids: de.jexpr( '.items.id' )
                 }
-            },
-            bar: de.block( {
-                ...
-                options: {
-                    select: {
-                        //  Здесь добавляется одиночный id.
-                        ids: de.jexpr( '.result.id' )
-                    }
+            }
+        },
+        bar: de.block( {
+            ...
+            options: {
+                select: {
+                    //  Здесь добавляется одиночный id.
+                    ids: de.jexpr( '.result.id' )
                 }
-            },
-
-            quu: de.block( {
-                ...
-                options: {
-                    //  Ждем, пока все остальные блоки выполнятся.
-                    priority: -10,
-                    params: {
-                        //  Отправляем все ids, которые накопились в стейте.
-                        ids: de.jexpr( 'state.ids' )
-                    }
-                }
-            } )
+            }
         },
 
-        options: {
-            before: function( params, context, state ) {
-                //  Инициализируем значение массивом.
-                state.ids = [];
+        quu: de.block( {
+            ...
+            options: {
+                //  Ждем, пока все остальные блоки выполнятся.
+                priority: -10,
+                params: {
+                    //  Отправляем все ids, которые накопились в стейте.
+                    ids: de.jexpr( 'state.ids' )
+                }
             }
-        }
+        } )
+    },
 
-    } )
+    options: {
+        before: function( params, context, state ) {
+            //  Инициализируем значение массивом.
+            state.ids = [];
+        }
+    }
+
+} )
+```
 
 
 ## `options.after`
@@ -332,31 +366,35 @@
 Можно вернуть ошибку, если результат неверный, можно закончить работу с ошибкой или редиректом,
 выставить куки, положить что-то  в стейт и т.д.
 
-    after: function( params, context, state, result ) {
-        if ( !result.id ) {
-            return de.error( {
-                id: 'NOT_FOUND',
-                message: 'Page not found',
-                status_code: 404
-            } );
-        }
+```js
+after: function( params, context, state, result ) {
+    if ( !result.id ) {
+        return de.error( {
+            id: 'NOT_FOUND',
+            message: 'Page not found',
+            status_code: 404
+        } );
     }
+}
+```
 
 
 ## `options.result`
 
 Пост-обработка. Возможность как-то модифицировать результат выполнения блока:
 
-    //  Вытащить какой-то кусок полученного объекта.
-    result: de.jexpr( '.result.mark' )
+```js
+//  Вытащить какой-то кусок полученного объекта.
+result: de.jexpr( '.result.mark' )
 
-    //  Собрать только нужное из собственно результата, стейта, параметров и т.д.
-    result: function( params, context, state, result ) {
-        return {
-            id: params.id,
-            foo: result.foo
-        };
-    }
+//  Собрать только нужное из собственно результата, стейта, параметров и т.д.
+result: function( params, context, state, result ) {
+    return {
+        id: params.id,
+        foo: result.foo
+    };
+}
+```
 
 Эта функция вызывается синхронно.
 
