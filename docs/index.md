@@ -2,45 +2,46 @@
 
 ## Getting Started
 
-    const http_ = require( 'http' );
-    const de = require( 'descript2' );
-    const router = require( './router' );
+```js
+const http_ = require( 'http' );
+const de = require( 'descript2' );
+const router = require( './router' );
 
-    http_
-        .createServer( function( req, res ) {
-            const context = new de.Context( req, res );
+http_
+    .createServer( function( req, res ) {
+        const context = new de.Context( req, res );
 
-            //  В этом гипотетическом примере роутер возвращает структуру вида:
-            //
-            //      {
-            //          block,
-            //          params,
-            //          template
-            //      }
-            //
-            //  Конечно, в роутер можно передавать и `req.url` и `req`,
-            //  но лучше сразу весь `context`.
-            //
-            const route = router( context );
+        //  В этом гипотетическом примере роутер возвращает структуру вида:
+        //
+        //      {
+        //          block,
+        //          params,
+        //          template
+        //      }
+        //
+        //  Конечно, в роутер можно передавать и `req.url` и `req`,
+        //  но лучше сразу весь `context`.
+        //
+        const route = router( context );
 
-            //  Запускаем блок с параметрами.
-            context.run( route.block, route.params )
-                .then( function( result ) {
-                    //  В `result` может быть и ошибка.
-                    if ( de.is_error( result ) ) {
-                        res.statusCode = 500;
-                        res.end();
+        //  Запускаем блок с параметрами.
+        context.run( route.block, route.params )
+            .then( function( result ) {
+                //  В `result` может быть и ошибка.
+                if ( de.is_error( result ) ) {
+                    res.statusCode = 500;
+                    res.end();
 
-                    } else {
-                        //  Если все хорошо, накладываем шаблон.
-                        const html = route.template( result );
-                        res.end( html );
-                    }
-                } );
+                } else {
+                    //  Если все хорошо, накладываем шаблон.
+                    const html = route.template( result );
+                    res.end( html );
+                }
+            } );
 
-        } )
-        .listen( 8000 );
-
+    } )
+    .listen( 8000 );
+```
 
 ## Documentation
 
