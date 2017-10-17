@@ -590,6 +590,69 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'custom is_error, 404 error', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            const content = {
+                success: true
+            };
+
+            fake.add( path, {
+                status_code: 404,
+                content: content,
+            } );
+
+            var block = create_block( {
+                url: `${ base_url }${ path }`,
+                is_error: function() {
+                    return false;
+                }
+            } );
+
+            var context = create_context();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result ).to.not.be.a( no.Error );
+                    expect( result ).to.be.eql( content );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.max_retries=1, retry_timeout > 0, 500 error', function( done ) {
+            var path = `/block/http/${ n++ }`;
+
+            var content = 'Hello, World';
+
+            fake.add( path, [
+                {
+                    status_code: 500,
+                },
+                {
+                    status_code: 200,
+                    content: content
+                }
+            ] );
+
+            var block = create_block( {
+                url: `${ base_url }${ path }`,
+                max_retries: 1,
+                retry_timeout: 500,
+            } );
+
+            var context = create_context();
+            var start = Date.now();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result ).to.be( content );
+                    var end = Date.now();
+                    // eslint-disable-next-line
+                    expect( end - start > 400 ).to.be.ok;
+
+                    done();
+                } );
+        } );
+
     } );
 
     run();
