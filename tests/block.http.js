@@ -653,6 +653,104 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'options.headers #1. options.headers is an object of strings', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            fake.add( path, function( req, res ) {
+                res.setHeader( 'content-type', 'application/json' );
+                res.end( JSON.stringify( req.headers ) );
+            } );
+
+            const block = create_block( {
+                url: `${ base_url }${ path }`,
+                headers: {
+                    'x-descript-test': 'passed'
+                }
+            } );
+
+            const context = create_context();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result[ 'x-descript-test' ] ).to.be( 'passed' );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.headers #3. parent\'s and child\'s options.headers are objects', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            fake.add( path, function( req, res ) {
+                res.setHeader( 'content-type', 'application/json' );
+                res.end( JSON.stringify( req.headers ) );
+            } );
+
+            const block1 = create_block( {
+                url: `${ base_url }${ path }`,
+                headers: {
+                    'x-descript-test-1': 'passed-1-1',
+                    'x-descript-test-2': 'passed-1-2',
+                }
+            } );
+            const block2 = block1( {
+                block: {
+                    headers: {
+                        'x-descript-test-2': 'passed-2-2',
+                        'x-descript-test-3': 'passed-2-3',
+                    }
+                }
+            } );
+
+            const context = create_context();
+            context.run( block2 )
+                .then( function( result ) {
+                    expect( result[ 'x-descript-test-1' ] ).to.be( 'passed-1-1' );
+                    expect( result[ 'x-descript-test-2' ] ).to.be( 'passed-2-2' );
+                    expect( result[ 'x-descript-test-3' ] ).to.be( 'passed-2-3' );
+
+                    done();
+                } );
+        } );
+
+        it( 'options.headers #4. parent\'s and child\'s options.headers are functions', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            fake.add( path, function( req, res ) {
+                res.setHeader( 'content-type', 'application/json' );
+                res.end( JSON.stringify( req.headers ) );
+            } );
+
+            const block1 = create_block( {
+                url: `${ base_url }${ path }`,
+                headers: function() {
+                    return {
+                        'x-descript-test-1': 'passed-1-1',
+                        'x-descript-test-2': 'passed-1-2',
+                    };
+                }
+            } );
+            const block2 = block1( {
+                block: {
+                    headers: function() {
+                        return {
+                            'x-descript-test-2': 'passed-2-2',
+                            'x-descript-test-3': 'passed-2-3',
+                        };
+                    }
+                }
+            } );
+
+            const context = create_context();
+            context.run( block2 )
+                .then( function( result ) {
+                    expect( result[ 'x-descript-test-1' ] ).to.be( 'passed-1-1' );
+                    expect( result[ 'x-descript-test-2' ] ).to.be( 'passed-2-2' );
+                    expect( result[ 'x-descript-test-3' ] ).to.be( 'passed-2-3' );
+
+                    done();
+                } );
+        } );
+
     } );
 
     run();
