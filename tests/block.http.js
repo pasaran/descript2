@@ -677,6 +677,34 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'options.headers #2. options.headers is an object of string and function', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            fake.add( path, function( req, res ) {
+                res.setHeader( 'content-type', 'application/json' );
+                res.end( JSON.stringify( req.headers ) );
+            } );
+
+            const block = create_block( {
+                url: `${ base_url }${ path }`,
+                headers: {
+                    'x-descript-test-1': 'passed-1',
+                    'x-descript-test-2': function() {
+                        return 'passed-2';
+                    },
+                }
+            } );
+
+            const context = create_context();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result[ 'x-descript-test-1' ] ).to.be( 'passed-1' );
+                    expect( result[ 'x-descript-test-2' ] ).to.be( 'passed-2' );
+
+                    done();
+                } );
+        } );
+
         it( 'options.headers #3. parent\'s and child\'s options.headers are objects', function( done ) {
             const path = `/block/http/${ n++ }`;
 
