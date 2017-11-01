@@ -2,6 +2,7 @@
 
 var expect = require( 'expect.js' );
 
+const no = require( 'nommon' );
 var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
@@ -676,6 +677,57 @@ describe( 'deps and select', function() {
                 expect( state ).to.be.eql( {
                     ids: [ 1, 2 ]
                 } );
+
+                done();
+            } );
+    } );
+
+    it( 'select with error #1', function( done ) {
+        const block = create_block(
+            helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            {
+                select: {
+                    foo: function( params, context, state, result ) {
+                        //  eslint-disable-next-line
+                        return noo.jpath( '.foo', result );
+                    },
+                }
+            }
+        );
+
+        const context = create_context();
+        const state = {};
+        context.run( block, null, state )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'ReferenceError' );
+
+                done();
+            } );
+    } );
+
+    it( 'select with error #2', function( done ) {
+        const block = create_block(
+            helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            {
+                select: {
+                    foo: function( params, context, state, result ) {
+                        return no.jpath( 'foo', result );
+                    },
+                }
+            }
+        );
+
+        const context = create_context();
+        const state = {};
+        context.run( block, null, state )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'TypeError' );
 
                 done();
             } );
