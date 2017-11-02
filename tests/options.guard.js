@@ -2,6 +2,7 @@
 
 var expect = require( 'expect.js' );
 
+const no = require( 'nommon' );
 var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
@@ -302,6 +303,69 @@ describe( 'options.guard', function() {
             .then( function( result ) {
                 expect( result ).to.be.a( de.Error );
                 expect( result.error.id ).to.be( ERROR_ID );
+
+                done();
+            } );
+    } );
+
+    it( 'guard with error #1', function( done ) {
+        const ERROR_ID = 'SOME_ERROR';
+
+        const block = create_block(
+            helpers.wrap( 'foo' ),
+            {
+                guard: function( params, context, state ) {
+                    throw Error( ERROR_ID );
+                }
+            }
+        );
+
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.message ).to.be( ERROR_ID );
+
+                done();
+            } );
+    } );
+
+    it( 'guard with error #2', function( done ) {
+        const block = create_block(
+            helpers.wrap( 'foo' ),
+            {
+                guard: function( params, context, state ) {
+                    //  eslint-disable-next-line
+                    return noo.jpath( '.foo', state );
+                }
+            }
+        );
+
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'ReferenceError' );
+
+                done();
+            } );
+    } );
+
+    it( 'guard with error #3', function( done ) {
+        const block = create_block(
+            helpers.wrap( 'foo' ),
+            {
+                guard: function( params, context, state ) {
+                    return no.jpath( 'foo', state );
+                }
+            }
+        );
+
+        var context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'TypeError' );
 
                 done();
             } );
