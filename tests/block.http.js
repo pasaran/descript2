@@ -779,6 +779,31 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'block.timeout', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            const content = 'Hello, World';
+            fake.add( path, {
+                status_code: 200,
+                content: content,
+                wait: 200,
+            } );
+
+            const block = create_block( {
+                url: `${ base_url }${ path }`,
+                timeout: 100,
+            } );
+
+            var context = helpers.context();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Error );
+                    expect( result.error.id ).to.be( 'REQUEST_TIMEOUT' );
+
+                    done();
+                } );
+        } );
+
     } );
 
     run();
