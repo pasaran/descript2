@@ -804,6 +804,64 @@ fake.start( function() {
                 } );
         } );
 
+        it( 'block.timeout inherits #1', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            const content = 'Hello, World';
+            fake.add( path, {
+                status_code: 200,
+                content: content,
+                wait: 200,
+            } );
+
+            const b1 = create_block( {
+                url: `${ base_url }${ path }`,
+                timeout: 300,
+            } );
+            const b2 = b1( {
+                block: {
+                    timeout: 100,
+                }
+            } );
+
+            var context = helpers.context();
+            context.run( b2 )
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Error );
+                    expect( result.error.id ).to.be( 'REQUEST_TIMEOUT' );
+
+                    done();
+                } );
+        } );
+
+        it( 'block.timeout inherits #2', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            const content = 'Hello, World';
+            fake.add( path, {
+                status_code: 200,
+                content: content,
+                wait: 200,
+            } );
+
+            const b1 = create_block( {
+                url: `${ base_url }${ path }`,
+                timeout: 100,
+            } );
+            const b2 = b1( {
+                block: {
+                    timeout: 300,
+                }
+            } );
+
+            var context = helpers.context();
+            context.run( b2 )
+                .then( function( result ) {
+                    expect( result ).to.be( content );
+
+                    done();
+                } );
+        } );
     } );
 
     run();
