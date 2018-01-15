@@ -682,6 +682,43 @@ describe( 'deps and select', function() {
             } );
     } );
 
+    it( 'parent and child with options.select', function( done ) {
+        var b1 = create_block(
+            helpers.wrap( {
+                foo: 'bar',
+                bar: 'foo',
+            }, 10 )
+        );
+
+        var b2 = b1( {
+            options: {
+                select: {
+                    foo: de.jexpr( '.bar' )
+                }
+            }
+        } );
+
+        var b3 = b2( {
+            options: {
+                select: {
+                    bar: de.jexpr( '.foo' )
+                }
+            }
+        } );
+
+        const context = create_context();
+        const state = {};
+        context.run( b3, null, state )
+            .then( function() {
+                expect( state ).to.be.eql( {
+                    foo: 'foo',
+                    bar: 'bar',
+                } );
+
+                done();
+            } );
+    } );
+
     it( 'select with error #1', function( done ) {
         const block = create_block(
             helpers.wrap( {
