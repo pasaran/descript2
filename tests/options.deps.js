@@ -6,6 +6,8 @@ var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
 
+const ERROR_ID = de.Error.ID.DEPS_ERROR;
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 describe( 'options.deps', function() {
@@ -256,7 +258,7 @@ describe( 'options.deps', function() {
         context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Error );
-                expect( result.error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result.error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );
@@ -318,7 +320,7 @@ describe( 'options.deps', function() {
                 expect( result[ 0 ] ).to.be.eql( 42 );
                 expect( result[ 1 ] ).to.be.eql( 24 );
                 expect( result[ 2 ] ).to.be.a( de.Error );
-                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 2 ].error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );
@@ -326,7 +328,7 @@ describe( 'options.deps', function() {
 
     it( 'block depends on a block resolved with an error', function( done ) {
         var b1 = de.func( {
-            block: helpers.wrap( de.error( 'UNKNOWN_ERROR' ), 50 )
+            block: helpers.wrap( de.error( de.Error.ID.UNKNOWN_ERROR ), 50 )
         } );
         var b2 = de.func( {
             block: helpers.wrap( 24 ),
@@ -339,9 +341,9 @@ describe( 'options.deps', function() {
         context.run( [ b1, b2 ] )
             .then( function( result ) {
                 expect( result[ 0 ] ).to.be.a( de.Error );
-                expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
+                expect( result[ 0 ].error.id ).to.be.eql( de.Error.ID.UNKNOWN_ERROR );
                 expect( result[ 1 ] ).to.be.a( de.Error );
-                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 1 ].error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );
@@ -349,7 +351,7 @@ describe( 'options.deps', function() {
 
     it( 'block depends on 2 blocks one of them resolved with an error', function( done ) {
         var b1 = de.func( {
-            block: helpers.wrap( de.error( 'UNKNOWN_ERROR' ), 50 )
+            block: helpers.wrap( de.error( de.Error.ID.UNKNOWN_ERROR ), 50 )
         } );
         var b2 = de.func( {
             block: helpers.wrap( 42, 100 )
@@ -365,10 +367,10 @@ describe( 'options.deps', function() {
         context.run( [ b1, b2, b3 ] )
             .then( function( result ) {
                 expect( result[ 0 ] ).to.be.a( de.Error );
-                expect( result[ 0 ].error.id ).to.be.eql( 'UNKNOWN_ERROR' );
+                expect( result[ 0 ].error.id ).to.be.eql( de.Error.ID.UNKNOWN_ERROR );
                 expect( result[ 1 ] ).to.be.eql( 42 );
                 expect( result[ 2 ] ).to.be.a( de.Error );
-                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 2 ].error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );
@@ -480,7 +482,7 @@ describe( 'options.deps', function() {
             .then( function( result ) {
                 expect( result[ 0 ] ).to.be.eql( { foo: 42 } );
                 expect( result[ 1 ] ).to.be.a( de.Error );
-                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 1 ].error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );
@@ -523,9 +525,9 @@ describe( 'options.deps', function() {
             .then( function( result ) {
                 expect( result[ 0 ] ).to.be.eql( { quu: 42 } );
                 expect( result[ 1 ] ).to.be.a( de.Error );
-                expect( result[ 1 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 1 ].error.id ).to.be.eql( ERROR_ID );
                 expect( result[ 2 ] ).to.be.a( de.Error );
-                expect( result[ 2 ].error.id ).to.be.eql( 'DEPS_ERROR' );
+                expect( result[ 2 ].error.id ).to.be.eql( ERROR_ID );
 
                 done();
             } );

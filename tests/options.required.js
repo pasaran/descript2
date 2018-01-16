@@ -48,7 +48,7 @@ describe( 'options.required', function() {
         } )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Error );
-                expect( result.error.id ).to.be.eql( 'REQUIRED_BLOCK_FAILED' );
+                expect( result.error.id ).to.be.eql( de.Error.ID.REQUIRED_BLOCK_FAILED );
 
                 done();
             } );
