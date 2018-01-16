@@ -38,3 +38,5 @@
   * [block.http] Дефолтные параметры для `de.request` доступны через `de.request.DEFAULT_OPTIONS`.
     В частности, оттуда можно достать `de.request.DEFAULT_OPTIONS.is_retry_allowed` и `de.request.DEFAULT_OPTIONS.is_error`.
 
+  * Поправлен баг в `options.select`. Если блок дважды (и больше) расширялся с select'ом, то select неправильно работал.
+
