@@ -31,7 +31,7 @@ describe( 'options.timeout', function() {
         context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Error );
-                expect( result.error.id ).to.be( 'BLOCK_TIMED_OUT' );
+                expect( result.error.id ).to.be( de.Error.ID.BLOCK_TIMED_OUT );
 
                 done();
             } );

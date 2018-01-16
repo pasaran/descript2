@@ -157,7 +157,7 @@ fake.start( function() {
 
         describe( 'context.redirect()', function() {
 
-            var ERROR_ID = 'REDIRECTED';
+            var ERROR_ID = de.Error.ID.REDIRECTED;
 
             it( 'argument is a string', function( done ) {
                 done = helpers.wrap_done( done, 2 );

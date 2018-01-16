@@ -7,7 +7,7 @@ var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
 
-var ERROR_ID = 'BLOCK_GUARDED';
+var ERROR_ID = de.Error.ID.BLOCK_GUARDED;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 

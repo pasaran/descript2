@@ -84,7 +84,7 @@ fake.start( function() {
                 expect( t2 - t1 < 300 ).to.be.ok();
 
                 expect( result.bar ).to.be.a( de.Error );
-                expect( result.bar.error.id ).to.be( 'HTTP_REQUEST_ABORTED' );
+                expect( result.bar.error.id ).to.be( de.Error.ID.HTTP_REQUEST_ABORTED );
                 expect( result.bar.error.reason ).to.be( REASON );
 
                 done();

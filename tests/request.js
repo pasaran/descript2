@@ -555,7 +555,7 @@ fake.start( function() {
                 )
                     .then( function( result ) {
                         expect( result ).to.be.a( no.Error );
-                        expect( result.error.id ).to.be( 'HTTP_UNKNOWN_ERROR' );
+                        expect( result.error.id ).to.be( de.Error.ID.HTTP_UNKNOWN_ERROR );
 
                         done();
                     } );
@@ -578,7 +578,7 @@ fake.start( function() {
                 );
                 promise.then( function( result ) {
                     expect( result ).to.be.a( no.Error );
-                    expect( result.error.id ).to.be( 'HTTP_REQUEST_ABORTED' );
+                    expect( result.error.id ).to.be( de.Error.ID.HTTP_REQUEST_ABORTED );
 
                     done();
                 } );
@@ -677,7 +677,7 @@ fake.start( function() {
                 )
                     .then( function( result ) {
                         expect( result ).to.be.a( no.Error );
-                        expect( result.error.id ).to.be( 'HTTP_CYCLIC_REDIRECT' );
+                        expect( result.error.id ).to.be( de.Error.ID.HTTP_CYCLIC_REDIRECT );
 
                         done();
                     } );
@@ -711,7 +711,7 @@ fake.start( function() {
                 )
                     .then( function( result ) {
                         expect( result ).to.be.a( no.Error );
-                        expect( result.error.id ).to.be( 'HTTP_CYCLIC_REDIRECT' );
+                        expect( result.error.id ).to.be( de.Error.ID.HTTP_CYCLIC_REDIRECT );
 
                         done();
                     } );

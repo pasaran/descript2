@@ -1,7 +1,7 @@
+/* eslint-env mocha */
+
 var fs_ = require( 'fs' );
 var path_ = require( 'path' );
-
-var no = require( 'nommon' );
 
 var expect = require( 'expect.js' );
 
@@ -163,7 +163,7 @@ describe( 'block.file', function() {
         context.run( block )
             .then( function( result ) {
                 expect( result ).to.be.a( de.Error );
-                expect( result.error.id ).to.be( 'INVALID_JSON' );
+                expect( result.error.id ).to.be( de.Error.ID.INVALID_JSON );
 
                 done();
             } );

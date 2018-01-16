@@ -215,7 +215,7 @@ fake.start( function() {
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
 
-                    expect( result.error.id ).to.be( 'INVALID_JSON' );
+                    expect( result.error.id ).to.be( de.Error.ID.INVALID_JSON );
 
                     done();
                 } );
@@ -798,7 +798,7 @@ fake.start( function() {
             context.run( block )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
-                    expect( result.error.id ).to.be( 'REQUEST_TIMEOUT' );
+                    expect( result.error.id ).to.be( de.Error.ID.REQUEST_TIMEOUT );
 
                     done();
                 } );
@@ -828,7 +828,7 @@ fake.start( function() {
             context.run( b2 )
                 .then( function( result ) {
                     expect( result ).to.be.a( de.Error );
-                    expect( result.error.id ).to.be( 'REQUEST_TIMEOUT' );
+                    expect( result.error.id ).to.be( de.Error.ID.REQUEST_TIMEOUT );
 
                     done();
                 } );
