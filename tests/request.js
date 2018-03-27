@@ -93,6 +93,26 @@ fake.start( function() {
                     } );
             } );
 
+            it( 'invalid protocol', function( done ) {
+                var path = `/get/${ n++ }`;
+
+                var context = create_context();
+                de.request(
+                    {
+                        protocol: 'http',
+                        host: '127.0.0.1',
+                        port: port,
+                        path: path
+                    },
+                    context
+                )
+                    .then( function( result ) {
+                        expect( result ).to.be.a( no.Error );
+
+                        done();
+                    } );
+            } );
+
             it( 'method is get', function( done ) {
                 var path = `/get/${ n++ }`;
 
