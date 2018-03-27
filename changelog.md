@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.27
+
+  * `try/catch` для вызова `https?.request`. Ловим ошибки, например, для неправильного протокола.
+
 ## 0.0.26
 
   * Коды ошибок переехали в enum `de.Error.ID`. Например, `de.Error.ID.TCP_CONNECTION_TIMEOUT`.
