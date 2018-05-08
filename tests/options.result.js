@@ -6,6 +6,8 @@ var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
 
+const ERROR_ID = 'RESULT_ERROR';
+
 //  ---------------------------------------------------------------------------------------------------------------  //
 
 function create_block( block, options ) {
@@ -183,6 +185,74 @@ describe( 'options.result', function() {
                 expect( result ).to.be.eql( {
                     quu: 42
                 } );
+
+                done();
+            } );
+    } );
+
+    it( 'result with error #1', function( done ) {
+        const block = create_block(
+            helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            {
+                result: function() {
+                    throw new Error( ERROR_ID );
+                }
+            }
+        );
+
+        const context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'Error' );
+                expect( result.error.message ).to.be( ERROR_ID );
+
+                done();
+            } );
+    } );
+
+    it( 'result with error #2', function( done ) {
+        const block = create_block(
+            helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            {
+                result: function() {
+                    //  eslint-disable-next-line
+                    return a;
+                }
+            }
+        );
+
+        const context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'ReferenceError' );
+
+                done();
+            } );
+    } );
+
+    it( 'result with error #3', function( done ) {
+        const block = create_block(
+            helpers.wrap( {
+                foo: 42
+            }, 10 ),
+            {
+                result: function() {
+                    return null.foo;
+                }
+            }
+        );
+
+        const context = helpers.context();
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be.a( de.Error );
+                expect( result.error.id ).to.be( 'TypeError' );
 
                 done();
             } );
