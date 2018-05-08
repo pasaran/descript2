@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.29
+
+  * `try/catch` для вызова `options.select`.
+
 ## 0.0.28
 
   * [block.func] Всегда возвращаем промис, если action вернул значение, оборачиваем его в `no.promise.resolved`.
