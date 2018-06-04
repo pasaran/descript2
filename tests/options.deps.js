@@ -534,7 +534,9 @@ describe( 'options.deps', function() {
     } );
 
     it( 'two blocks with the same id', function( done ) {
-        let count = 0;
+        let run_count = 0;
+        let before_count = 0;
+        let after_count = 0;
 
         const AUTH = {
             auth: true,
@@ -542,13 +544,21 @@ describe( 'options.deps', function() {
 
         const session = de.func( {
             block: helpers.wrap( function() {
-                count++;
+                run_count++;
 
                 return AUTH;
             }, 10 ),
 
             options: {
                 id: 'session',
+
+                before: function() {
+                    before_count++;
+                },
+
+                after: function() {
+                    after_count++;
+                },
             },
         } );
 
@@ -583,7 +593,9 @@ describe( 'options.deps', function() {
         const context = helpers.context();
         context.run( page )
             .then( function( result ) {
-                expect( count ).to.be( 1 );
+                expect( run_count ).to.be( 1 );
+                expect( before_count ).to.be( 1 );
+                expect( after_count ).to.be( 1 );
                 expect( result.foo.session ).to.be( AUTH );
                 expect( result.foo.session ).to.be( AUTH );
 
