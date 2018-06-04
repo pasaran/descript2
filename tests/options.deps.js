@@ -533,5 +533,63 @@ describe( 'options.deps', function() {
             } );
     } );
 
+    it( 'two blocks with the same id', function( done ) {
+        let count = 0;
+
+        const AUTH = {
+            auth: true,
+        };
+
+        const session = de.func( {
+            block: helpers.wrap( function() {
+                count++;
+
+                return AUTH;
+            }, 10 ),
+
+            options: {
+                id: 'session',
+            },
+        } );
+
+        const page = {
+            session: session,
+
+            foo: {
+                session: session,
+
+                foo: de.func( {
+                    block: helpers.wrap( 'foo', 20 ),
+
+                    options: {
+                        deps: 'session',
+                    },
+                } ),
+            },
+
+            bar: {
+                session: session,
+
+                foo: de.func( {
+                    block: helpers.wrap( 'bar', 30 ),
+
+                    options: {
+                        deps: 'session',
+                    },
+                } ),
+            },
+        };
+
+        const context = helpers.context();
+        context.run( page )
+            .then( function( result ) {
+                expect( count ).to.be( 1 );
+                expect( result.foo.session ).to.be( AUTH );
+                expect( result.foo.session ).to.be( AUTH );
+
+                done();
+            } );
+    } );
+
 } );
 
