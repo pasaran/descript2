@@ -23,13 +23,13 @@ var base_url = `http://127.0.0.1:${ port }`;
 
 var hello_string = 'Hello, World';
 
-var log = new de.Log( {
+var logger = new de.Logger( {
     debug: true
 } );
 
 function create_context() {
     var context = new de.Context.Base( {
-        log: log
+        logger: logger
     } );
 
     return context;
@@ -317,6 +317,40 @@ fake.start( function() {
                         url: `${ base_url }${ path }`,
                         method: 'POST',
                         body: content
+                    },
+                    context
+                )
+                    .then( function() {
+                        done();
+                    } );
+            } );
+
+            it( 'body is an object, content-type: application/json', function( done ) {
+                const path = `/post/${ n++ }`;
+
+                const content = {
+                    hello: 'Привет!',
+                    foo: 42
+                };
+
+                fake.add( path, function( req, res, data ) {
+                    expect( String( data ) ).to.be( JSON.stringify( content ) );
+                    expect( JSON.parse( data ) ).to.be.eql( content );
+                    expect( req.headers[ 'content-type' ] ).to.be( 'application/json' );
+                    expect( Number( req.headers[ 'content-length' ] ) ).to.be( data.length );
+
+                    res.end();
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        method: 'POST',
+                        body: content,
+                        headers: {
+                            'content-type': 'application/json',
+                        },
                     },
                     context
                 )

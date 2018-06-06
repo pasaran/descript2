@@ -18,8 +18,7 @@ var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var log = new de.Log( {
-    off: true,
+var logger = new de.Logger( {
     debug: false
 } );
 
@@ -32,7 +31,7 @@ function create_block( block, options ) {
 
 function create_context() {
     return new de.Context.Base( {
-        log: log
+        logger: logger
     } );
 }
 

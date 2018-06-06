@@ -18,13 +18,13 @@ var base_url = `http://127.0.0.1:${ port }`;
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-var log = new de.Log( {
+var logger = new de.Logger( {
     debug: true
 } );
 
 function create_context() {
     var context = new de.Context.Base( {
-        log: log
+        logger: logger
     } );
 
     return context;

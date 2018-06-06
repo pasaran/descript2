@@ -1,5 +1,77 @@
 # Changelog
 
+## 0.0.33
+
+  * [logger] **breaking change**. Многое поменялось в логировании:
+
+      * `de.Log` -> de.Logger`.
+
+      * Вместо
+
+        const context = new de.Context( {
+            log: new de.Log( { debug: true } ),
+        } );
+
+      нужно писать:
+
+        const context = new de.Context( {
+            logger: new de.Logger( { debug: true } ),
+        } );
+
+      * Или же можно передать произвольный объект с одним методом `log( event, context )`.
+
+      * Вместо `context.error`, `context.info`, `context.warn`, `context.debug` появился один метод `context.log`,
+      который просто вызывает `context.logger.log( event, this )`.
+
+      * В метод log приходит некий `event`, описывающий, что случилось и `context`.
+
+        У event примерно такая структура:
+
+            {
+                type: de.Logger.EVENT.REQUEST_START | de.Logger.EVENT.REQUEST_SUCCESS | de.Logger.EVENT.REQUEST_ERROR,
+
+                request_options: {
+                    //  Это то, что целиком уходит в нодовский https?.request
+                    //  В частности, тут есть headers, host/hostname, path/pathname, port, method, ...
+                    options: { ... },
+
+                    //  Если это POST/PUT/PATCH.
+                    body: Buffer | string,
+
+                    //  Помимо этого есть еще разные поля, типа:
+
+                    //  Удобно для логирования.
+                    url: string,
+
+                    retries: number,
+                    max_retries: number,
+                    redirects: number,
+                    max_redirects: number,
+                    ...
+                },
+
+                //  Если type === de.Logger.EVENT.REQUEST_ERROR
+                error: de.Error,
+
+                //  Если type === de.Logger.EVENT.REQUEST_SUCCESS
+                result: Object,
+
+                timestamps: {
+                    //  Начало и окончание запроса, эти поля по идее есть всегда.
+                    start: number,
+                    end: number,
+
+                    //  Получение socket'а
+                    socket: number,
+
+                    //  Установление tcp-соединения
+                    tcp_connection: number,
+
+                    //  Получение первых данных в ответе.
+                    first_byte: number,
+                },
+            }
+
 ## 0.0.32
 
   * Если в одном контексте запускается несколько блоков с одинаковым id,
