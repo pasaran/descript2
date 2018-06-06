@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.0.34
+
+  * [logger] Вернул `request_options.extra`:
+
+        request_options: {
+            options: { ... },
+
+            extra: {
+                name: 'myApi',
+            },
+
+            ...
+
 ## 0.0.33
 
   * [logger] **breaking change**. Многое поменялось в логировании:
