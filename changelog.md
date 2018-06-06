@@ -4,7 +4,7 @@
 
   * [logger] **breaking change**. Многое поменялось в логировании:
 
-      * `de.Log` -> de.Logger`.
+      * `de.Log` -> `de.Logger`.
 
       * Вместо
 
