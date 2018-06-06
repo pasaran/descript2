@@ -8,15 +8,15 @@
 
       * Вместо
 
-        const context = new de.Context( {
-            log: new de.Log( { debug: true } ),
-        } );
+            const context = new de.Context( {
+                log: new de.Log( { debug: true } ),
+            } );
 
-      нужно писать:
+        нужно писать:
 
-        const context = new de.Context( {
-            logger: new de.Logger( { debug: true } ),
-        } );
+            const context = new de.Context( {
+                logger: new de.Logger( { debug: true } ),
+            } );
 
       * Или же можно передать произвольный объект с одним методом `log( event, context )`.
 
