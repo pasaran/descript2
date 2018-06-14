@@ -2,7 +2,6 @@
 
 var expect = require( 'expect.js' );
 
-const no = require( 'nommon' );
 var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
@@ -356,7 +355,7 @@ describe( 'options.guard', function() {
             helpers.wrap( 'foo' ),
             {
                 guard: function( params, context, state ) {
-                    return no.jpath( 'foo', state );
+                    return state.foo.bar;
                 }
             }
         );

@@ -2,7 +2,6 @@
 
 var expect = require( 'expect.js' );
 
-const no = require( 'nommon' );
 var de = require( '../lib/index.js' );
 
 var helpers = require( './_helpers.js' );
@@ -753,7 +752,7 @@ describe( 'deps and select', function() {
             {
                 select: {
                     foo: function( params, context, state, result ) {
-                        return no.jpath( 'foo', result );
+                        return result.bar.foo;
                     },
                 }
             }
