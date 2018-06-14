@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.36
+
+  * Поддержка `nommon@0.0.52`.
+
+## 0.0.35
+
+  * [request] Поддержка gzip/deflate.
+
 ## 0.0.34
 
   * [logger] Вернул `request_options.extra`:
