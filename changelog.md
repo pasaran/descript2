@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.37
+
+  * [request] После `context.abort(error)` все блоки должны завершаться с `HTTP_REQUEST_ABORTED`,
+    а не с `error`.
+
 ## 0.0.36
 
   * Поддержка `nommon@0.0.52`.
