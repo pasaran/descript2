@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.38
+
+  * [request] Не разрешаем ретраить POST/PATCH запросы.
+
 ## 0.0.37
 
   * [request] После `context.abort(error)` все блоки должны завершаться с `HTTP_REQUEST_ABORTED`,
