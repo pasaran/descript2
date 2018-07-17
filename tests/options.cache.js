@@ -3,7 +3,6 @@
 var expect = require( 'expect.js' );
 
 var de = require( '../lib/index.js' );
-require( '../lib/de.cache.js' );
 
 var helpers = require( './_helpers.js' );
 
