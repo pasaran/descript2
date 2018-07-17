@@ -9,7 +9,6 @@ var helpers = require( './_helpers.js' );
 
 //  ---------------------------------------------------------------------------------------------------------------  //
 
-//  var memcache = new de.Cache( '127.0.0.1:11211' );
 var test_async_cache = new de.Cache.TestAsync();
 //  var test_sync_cache = new de.Cache.TestSync();
 
@@ -82,6 +81,38 @@ describe( 'options.cache', function() {
                 } );
         }, 1500 );
 
+    } );
+
+    it( 'options.cache', function( done ) {
+        const key = `key-${ n++ }`;
+
+        const cache_1 = new de.Cache();
+        const cache_2 = new de.Cache();
+
+        const RESULT = {
+            foo: true
+        };
+
+        const block = create_block(
+            helpers.wrap( RESULT, 50 ),
+            {
+                key: key,
+                maxage: 60,
+                cache: cache_1,
+            }
+        );
+
+        const context = new de.Context.Base( {
+            cache: cache_2,
+        } );
+        context.run( block )
+            .then( function( result ) {
+                expect( result ).to.be( RESULT );
+                expect( cache_1._cache[ key ].data ).to.be( RESULT );
+                expect( cache_2._cache[ key ] ).to.be( undefined );
+
+                done();
+            } );
     } );
 
 } );
