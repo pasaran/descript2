@@ -39,7 +39,7 @@ de.object( {
     options: {
         isolate_state: true,
         select: {
-            count: '.bar.count'
+            count: de.jexpr('.bar.count')
         }
     }
 
