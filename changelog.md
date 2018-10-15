@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.41
+
+  * [request, block.http] Поддержка basic auth.
+
 ## 0.0.39, 0.0.40
 
   * [block] Возможность передать в `options.cache` свой, специфичный для блока кэш.
