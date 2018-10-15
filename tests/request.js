@@ -117,9 +117,9 @@ fake.start( function() {
                 var path = `/get/${ n++ }`;
 
                 fake.add( path, function( req, res, data ) {
-                    expect( req.method ).to.be.eql( 'GET' );
-
                     res.end();
+
+                    expect( req.method ).to.be.eql( 'GET' );
                 } );
 
                 var context = create_context();
@@ -138,10 +138,10 @@ fake.start( function() {
                 var path = `/get/${ n++ }`;
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( req.headers[ 'x-request-test-1' ] ).to.be( 'foo' );
                     expect( req.headers[ 'x-request-test-2' ] ).to.be( 'bar' );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -195,9 +195,9 @@ fake.start( function() {
                 };
 
                 fake.add( path, function( req, res, data ) {
-                    expect( url_.parse( req.url, true ).query ).to.be.eql( query );
-
                     res.end();
+
+                    expect( url_.parse( req.url, true ).query ).to.be.eql( query );
                 } );
 
                 var context = create_context();
@@ -217,12 +217,12 @@ fake.start( function() {
                 var path = `/get${ n++ }`;
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( url_.parse( req.url, true ).query ).to.be.eql( {
                         foo: 42,
                         bar: 24
                     } );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -274,11 +274,11 @@ fake.start( function() {
                 var content = new Buffer( 'Привет!' );
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( Buffer.compare( content, data ) ).to.be( 0 );
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/octet-stream' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( Buffer.byteLength( content ) ) );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -304,11 +304,11 @@ fake.start( function() {
                 };
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( qs_.parse( data.toString() ) ).to.be.eql( content );
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/x-www-form-urlencoded' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( qs_.stringify( content ).length ) );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -334,12 +334,12 @@ fake.start( function() {
                 };
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( String( data ) ).to.be( JSON.stringify( content ) );
                     expect( JSON.parse( data ) ).to.be.eql( content );
                     expect( req.headers[ 'content-type' ] ).to.be( 'application/json' );
                     expect( Number( req.headers[ 'content-length' ] ) ).to.be( data.length );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -365,11 +365,11 @@ fake.start( function() {
                 var content = hello_string;
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( data.toString() ).to.be( content );
                     expect( req.headers[ 'content-type' ] ).to.be( 'text/plain' );
                     expect( req.headers[ 'content-length' ] ).to.be( String( content.length ) );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -392,10 +392,10 @@ fake.start( function() {
                 var css = 'body { margin: 0 };';
 
                 fake.add( path, function( req, res, data ) {
+                    res.end();
+
                     expect( data.toString() ).to.be( css );
                     expect( req.headers[ 'content-type' ] ).to.be( 'text/css' );
-
-                    res.end();
                 } );
 
                 var context = create_context();
@@ -519,9 +519,9 @@ fake.start( function() {
                     {
                         status_code: 200,
                         content: function( req, res, data ) {
-                            expect( data.toString() ).to.be( hello_string );
-
                             res.end();
+
+                            expect( data.toString() ).to.be( hello_string );
                         }
                     }
                 ] );
@@ -799,6 +799,61 @@ fake.start( function() {
 
                         done();
                     } );
+            } );
+
+        } );
+
+        describe( 'basic auth', function() {
+
+            it( 'auth in url', function( done ) {
+                const path = `/auth/${ n++ }`;
+
+                const auth = 'foo:bar';
+
+                fake.add( path, function( req, res ) {
+                    res.end();
+
+                    const auth_header = ( req.headers[ 'authorization' ] || '' ).replace( /^Basic\s*/, '' );
+                    const request_auth = Buffer.from( auth_header, 'base64' ).toString();
+
+                    expect( request_auth ).to.be( auth );
+
+                    done();
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `http://${ auth }@127.0.0.1:${ port }${ path }`,
+                    },
+                    context
+                );
+            } );
+
+            it( 'auth in options', function( done ) {
+                const path = `/auth/${ n++ }`;
+
+                const auth = 'foo:bar';
+
+                fake.add( path, function( req, res ) {
+                    res.end();
+
+                    const auth_header = ( req.headers[ 'authorization' ] || '' ).replace( /^Basic\s*/, '' );
+                    const request_auth = Buffer.from( auth_header, 'base64' ).toString();
+
+                    expect( request_auth ).to.be( auth );
+
+                    done();
+                } );
+
+                var context = create_context();
+                de.request(
+                    {
+                        url: `${ base_url }${ path }`,
+                        auth: auth,
+                    },
+                    context
+                );
             } );
 
         } );
