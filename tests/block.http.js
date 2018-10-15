@@ -280,6 +280,8 @@ fake.start( function() {
                     quu: 24
                 } );
 
+                res.end();
+
                 done();
             } );
 
@@ -318,6 +320,8 @@ fake.start( function() {
                 } );
                 expect( body ).to.be.eql( params );
 
+                res.end();
+
                 done();
             } );
 
@@ -354,6 +358,8 @@ fake.start( function() {
                     boo: 66,
                     qoo: 35
                 } );
+
+                res.end();
 
                 done();
             } );
@@ -395,6 +401,8 @@ fake.start( function() {
                     boo: 66,
                     qoo: 35
                 } );
+
+                res.end();
 
                 done();
             } );
