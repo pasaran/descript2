@@ -2,6 +2,11 @@
 
 ## 0.0.42
 
+  * Merge pull request #14 from doochik/retry-on-request-error
+  * Merge pull request #13 from doochik/error-is-undefine
+
+## 0.0.42
+
   * [block.object] Временный костыль для решения проблемы с подблоками с одинаковыми id-шниками.
 
 ## 0.0.41
