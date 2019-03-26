@@ -27,7 +27,7 @@
         "nommon": ">=0.0.46",
         "expect.js": "*",
         "eslint": "2.7.0",
-        "eslint-plugin-nop": "git@github.com:pasaran/eslint-plugin-nop.git"
+        "eslint-plugin-nop": "https://github.com/pasaran/eslint-plugin-nop.git"
     },
     "files": [
         "lib"
