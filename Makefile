@@ -57,7 +57,7 @@ options.required:
 	node_modules/.bin/mocha tests/options.required.js
 
 block.http:
-	node_modules/.bin/mocha --delay tests/block.http.js
+	node_modules/.bin/mocha --delay --retries 1 --timeout 5000 tests/block.http.js
 
 block.file:
 	node_modules/.bin/mocha tests/block.file.js
