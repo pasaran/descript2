@@ -12,6 +12,9 @@
         "type": "git",
         "url": "git://github.com/pasaran/descript2.git"
     },
+    "scripts": {
+        "test": "make tests"
+    },
     "dependencies": {
         "cookies": "0.5.1",
         "decompress-response": "^3.3.0"
