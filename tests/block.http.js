@@ -870,6 +870,32 @@ fake.start( function() {
                     done();
                 } );
         } );
+
+        it( 'incomplete response', function( done ) {
+            const path = `/block/http/${ n++ }`;
+
+            const content = 'Hello, World';
+            fake.add( path, {
+                status_code: 200,
+                content: content,
+                stops: [ 100, 200 ],
+                timeout: 150,
+            } );
+
+            const block = create_block( {
+                url: `${ base_url }${ path }`,
+            } );
+
+            var context = helpers.context();
+            context.run( block )
+                .then( function( result ) {
+                    expect( result ).to.be.a( de.Error );
+                    expect( result.error.id ).to.be( de.Error.ID.INCOMPLETE_RESPONSE );
+
+                    done();
+                } );
+        } );
+
     } );
 
     run();
