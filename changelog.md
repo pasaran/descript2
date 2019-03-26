@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.0.42
+## 0.0.44
+
+  * [block.http] `block.family`
+  * [block.http] `block.prepare_request_options`
+
+## 0.0.43
 
   * Merge pull request #14 from doochik/retry-on-request-error
   * Merge pull request #13 from doochik/error-is-undefine
