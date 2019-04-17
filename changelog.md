@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.45
+
+  * [request] Merge pull request #21. res.complete надо проверять у http-response, а не unzip-stream.
+
 ## 0.0.44
 
   * [block.http] `block.family`
